@@ -14,7 +14,6 @@ public class GhostFace : MonoBehaviour
 
 
 
-    public float health = 100;
     public GameObject player;
     public GameManager gameManager;
     public ParticleSystem fireParticles;
@@ -158,29 +157,6 @@ public class GhostFace : MonoBehaviour
     }
 
 
-
-    public void TakeDamage(float damageTaken)
-    {
-        //Debug.Log("OUCH CHARLIE THAT HURTS");
-        health -= damageTaken;
-
-        if (health <= 0)
-        {
-            Die();
-        }
-    }
-
-
-    void Die()
-    {
-        Debug.Log("Me ghost, me ded");
-
-        if (!timeSlowActive)
-        gameManager.StartSlowDown();
-
-
-        Destroy(this.gameObject);
-    }
 
 
 }

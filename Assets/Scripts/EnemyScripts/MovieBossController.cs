@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class MovieBossController : MonoBehaviour
 {
@@ -11,12 +12,13 @@ public class MovieBossController : MonoBehaviour
     private bool canSeePlayer = false;
     [SerializeField] private LayerMask targetMask;
     [SerializeField] private LayerMask wallsMask;
-    [SerializeField] private CharacterController controller;
     [SerializeField] private Vector3 rotationOffset;
 
 
     [Header("Attacking and health")]
     public float health = 100;
+    //[SerializeField] float[] healthPhases = {75, 50, 25};    
+    [SerializeField] List<float> healthPhasesList = new List<float>{75, 50, 25};
     public GameObject player;
     public GameManager gameManager;
     public float enemySpeed = 10f;
@@ -34,6 +36,7 @@ public class MovieBossController : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundDistance = 0.1f;
     [SerializeField] private LayerMask groundMask;
+    [SerializeField] private MovieNavigation navController;
 
 
 
@@ -55,13 +58,11 @@ public class MovieBossController : MonoBehaviour
     {
         if (canSeePlayer && !currentlyAttacking)
         {
-            //MoveTowardsPoint(player.transform.position);
-            transform.LookAt(player.transform);
+            navController.canWeMove = true;
+            anim.SetBool("Running", true);
 
-            Debug.Log("Distance between boss and player is: " + Vector3.Distance(controller.transform.position, player.transform.position));
-            if (Vector3.Distance(controller.transform.position, player.transform.position) < attackDistance)
+            if (Vector3.Distance(transform.position, player.transform.position) < attackDistance)
             {
-                Debug.Log("Attacking now since we're in range");
                 StartCoroutine(Attack());
             }
 
@@ -69,11 +70,11 @@ public class MovieBossController : MonoBehaviour
 
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
-        if (velocity.y < gravity && !isGrounded)
+        /*if (velocity.y < gravity && !isGrounded)
         {
             
             Gravity();
-        }
+        }*/
     }
 
 
@@ -123,19 +124,7 @@ public class MovieBossController : MonoBehaviour
 
 
 
-    private void Gravity()
-    {
-            velocity.y += gravity * Time.deltaTime;
-    }
 
-    /*private void MoveTowardsPoint(Vector3 movingToPoint)
-    {
-
-        controller.Move((((player.transform.position - controller.transform.position).normalized) * enemySpeed) * Time.deltaTime);
-        controller.Move(velocity * Time.deltaTime);
-
-        anim.SetBool("Running", true);
-    }*/
 
 
     private IEnumerator Attack()
@@ -143,32 +132,16 @@ public class MovieBossController : MonoBehaviour
         currentlyAttacking = true;
         anim.SetBool("Attacking", true);
         anim.SetBool("Running", false);
-        enemySpeed = 0f;
+        navController.canWeMove = false;
         yield return new WaitForSeconds(groundSlamTime);
         anim.SetBool("Attacking", false);
         currentlyAttacking = false;
-        transform.LookAt(player.transform);
-        enemySpeed = defaultMoveSpeed;
+        navController.canWeMove = true;
     }
 
 
 
 
-    public void TakeDamage(float damageTaken)
-    {
-        health -= damageTaken;
 
-        if (health <= 0)
-        {
-            Die();
-        }
-    }
-
-
-    void Die()
-    {
-        Debug.Log("BIG BOSS DIE?! HOW DO?!");
-        Destroy(this.gameObject);
-    }
 
 }

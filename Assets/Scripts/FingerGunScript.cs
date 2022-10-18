@@ -10,8 +10,8 @@ public class FingerGunScript : MonoBehaviour
 
     [Header("Damage Calculations")]
     [SerializeField] private int damage = 40;
-    [SerializeField] private int limbMultiplier = 1;
-    [SerializeField] private int headshotMultiplier = 2;
+    [SerializeField] private float limbMultiplier = 1;
+    [SerializeField] private float headshotMultiplier = 2;
     [SerializeField] private float range;
     public float rateOfFire = 0.25f;
 
@@ -72,7 +72,9 @@ public class FingerGunScript : MonoBehaviour
 
         if (Physics.Raycast(fpsCam.transform.position, directionRay, out hit, range, shootableLayers))
         {
-            GhostFace target = hit.transform.GetComponentInParent<GhostFace>();
+            HealthSystem target = hit.transform.GetComponentInParent<HealthSystem>();
+            //MovieBossController target = hit.transform.GetComponent<MovieBossController>();
+
 
             //Check if we should increase or reduce damage based on where we hit
             if (target != null)
@@ -108,7 +110,6 @@ public class FingerGunScript : MonoBehaviour
         else
         {
             StartCoroutine(SpawnLineTrail((muzzle.transform.position + (fpsCam.transform.forward + directionRay) * range), range));
-            Debug.Log("We did not hit anything, but we're moving ahead");
         }
 
 

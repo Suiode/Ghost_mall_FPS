@@ -8,6 +8,7 @@ public class MovieNavigation : MonoBehaviour
     [SerializeField] private NavMeshAgent navMeshAgent;
     [SerializeField] private List<Vector3> nextPosition;
     [SerializeField] private Transform playerTrans;
+    public bool canWeMove = false;
 
 
 
@@ -20,21 +21,18 @@ public class MovieNavigation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        navMeshAgent.destination = playerTrans.position;
+        if (canWeMove)
+        {
+            navMeshAgent.destination = playerTrans.position;
+        }
     }
 
-    public void moveToPosition(Vector3 newPosition)
+    public IEnumerator moveToPosition(Vector3 newPosition)
     {
-        if(nextPosition.Count > 0)
+        while(canWeMove)
         {
-            Debug.Log("Wtf? More than one?!");
+            yield return null;
+            navMeshAgent.destination = playerTrans.position;
         }
-        else
-        {
-            nextPosition.Add(newPosition);
-            navMeshAgent.nextPosition = nextPosition[0];
-        }
-
-
     }
 }
