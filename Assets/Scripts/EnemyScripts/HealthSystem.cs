@@ -12,6 +12,7 @@ public class HealthSystem : MonoBehaviour
     {
         health -= damageTaken;
 
+        //Debug.Log("This object: " + transform.name + " took this much damage: " + damageTaken);
 
         if (health <= 0)
         {

@@ -27,6 +27,7 @@ public class MovieBossController : MonoBehaviour
     public Animator anim;
     private bool currentlyAttacking;
     [SerializeField] private float groundSlamTime = 2f;
+    [SerializeField] MovieBasicAttack basicAttack;
 
 
     [Header("Movement and gravity")]
@@ -133,6 +134,7 @@ public class MovieBossController : MonoBehaviour
         anim.SetBool("Attacking", true);
         anim.SetBool("Running", false);
         navController.canWeMove = false;
+        StartCoroutine(basicAttack.NormalAttack());
         yield return new WaitForSeconds(groundSlamTime);
         anim.SetBool("Attacking", false);
         currentlyAttacking = false;

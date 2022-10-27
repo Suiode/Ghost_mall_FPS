@@ -143,18 +143,6 @@ public class PlayerController : MonoBehaviour
 
 
 
-    /*public void HealthSystem()
-    {
-        //healthSlider.value = health;
-
-        if (health < maxHealth)
-            health = health + (healthRegenSpeed * Time.deltaTime);
-
-        if (!canRegainHealth)
-            StartCoroutine(WaitForHealthRegen(healthRegenTimer));
-
-    }*/
-
 
     public void TakeDamage(float damageTaken)
     {
