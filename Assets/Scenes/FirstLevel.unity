@@ -5063,7 +5063,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!54 &283011586
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5106,7 +5106,7 @@ MonoBehaviour:
   enemySpeed: 5
   attackDistance: 5
   anim: {fileID: 575221367}
-  timeSlowActive: 0
+  timeSlowActive: 1
   normalMoveSpeed: 0
   normalAnimSpeed: 0
   timeSlowDownLength: 2
@@ -5145,6 +5145,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 25
+  parent: {fileID: 0}
+  affectedBySlowdown: 1
+  gameManager: {fileID: 0}
 --- !u!1 &290457560
 GameObject:
   m_ObjectHideFlags: 0
@@ -49630,8 +49633,8 @@ MonoBehaviour:
   playerCam: {fileID: 253287562}
   playerBody: {fileID: 1722741664}
   eyes: {fileID: 1652693045}
-  yMouseSens: 1000
-  xMouseSens: 200
+  yMouseSens: 500
+  xMouseSens: 100
 --- !u!114 &1542112248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49644,7 +49647,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 192ca498927ad874ca354d9cfef8a779, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 1000
+  health: 200
+  parent: {fileID: 0}
+  affectedBySlowdown: 0
+  gameManager: {fileID: 0}
 --- !u!1 &1546499933
 GameObject:
   m_ObjectHideFlags: 0
@@ -52533,7 +52539,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &1724472588
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -61736,6 +61742,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
@@ -63090,7 +63097,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!54 &2083146333
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -63133,7 +63140,7 @@ MonoBehaviour:
   enemySpeed: 5
   attackDistance: 5
   anim: {fileID: 524794299}
-  timeSlowActive: 0
+  timeSlowActive: 1
   normalMoveSpeed: 0
   normalAnimSpeed: 0
   timeSlowDownLength: 2
@@ -63172,6 +63179,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 25
+  parent: {fileID: 0}
+  affectedBySlowdown: 1
+  gameManager: {fileID: 0}
 --- !u!1 &2087916197
 GameObject:
   m_ObjectHideFlags: 0
@@ -65970,7 +65980,7 @@ MonoBehaviour:
   defaultMoveSpeed: 10
   attackDistance: 10
   anim: {fileID: 1502504246}
-  groundSlamTime: 2
+  groundSlamTime: 1
   basicAttack: {fileID: 1054415419857879930}
   gravity: -20
   isGrounded: 0
@@ -65990,7 +66000,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 1
-  m_Speed: 10
+  m_Speed: 15
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 240
@@ -66031,6 +66041,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 500
+  parent: {fileID: 0}
+  affectedBySlowdown: 0
+  gameManager: {fileID: 0}
 --- !u!114 &1054415419857879930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66045,7 +66058,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   range: 10
   damageAmount: 10
-  attackWaitTime: 0.6
+  attackWaitTime: 0.7
   canHurtSelf: 0
   selfColliders: []
   targetLayers:
@@ -78157,7 +78170,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8458359286040948781, guid: d00d736631e548e41b5e29eb46c50ebb, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8458359286040948790, guid: d00d736631e548e41b5e29eb46c50ebb, type: 3}
       propertyPath: m_RootOrder
@@ -78943,7 +78956,7 @@ MonoBehaviour:
   enemySpeed: 5
   attackDistance: 5
   anim: {fileID: 3588336607886623843}
-  timeSlowActive: 0
+  timeSlowActive: 1
   normalMoveSpeed: 0
   normalAnimSpeed: 0
   timeSlowDownLength: 2
@@ -78981,6 +78994,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 25
+  parent: {fileID: 0}
+  affectedBySlowdown: 1
+  gameManager: {fileID: 0}
 --- !u!1 &9152214672826475293
 GameObject:
   m_ObjectHideFlags: 0
