@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 public class MovieBossController : MonoBehaviour
 {
@@ -19,6 +18,7 @@ public class MovieBossController : MonoBehaviour
     public float health = 100;
     //[SerializeField] float[] healthPhases = {75, 50, 25};    
     [SerializeField] List<float> healthPhasesList = new List<float>{75, 50, 25};
+    [SerializeField] int currentHealthPhase;
     public GameObject player;
     public GameManager gameManager;
     public float enemySpeed = 10f;
@@ -28,11 +28,11 @@ public class MovieBossController : MonoBehaviour
     private bool currentlyAttacking;
     [SerializeField] private float groundSlamTime = 2f;
     [SerializeField] MovieBasicAttack basicAttack;
+    [SerializeField] HealthSystem healthSystem;
 
 
     [Header("Movement and gravity")]
     private Vector3 velocity;
-    [SerializeField] private float gravity = -20f;
     [SerializeField] private bool isGrounded = false;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundDistance = 0.1f;
@@ -71,11 +71,7 @@ public class MovieBossController : MonoBehaviour
 
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
-        /*if (velocity.y < gravity && !isGrounded)
-        {
-            
-            Gravity();
-        }*/
+        HealthCheck();
     }
 
 
@@ -141,8 +137,32 @@ public class MovieBossController : MonoBehaviour
         navController.canWeMove = true;
     }
 
+    public void HealthCheck()
+    {
+        if((currentHealthPhase < healthPhasesList.Count + 1) && (healthSystem.health < healthPhasesList[currentHealthPhase]))
+        {
+            ChangePhases();
+        }
+    }
 
+    public void ChangePhases()
+    {
+        currentHealthPhase += 1;
+        Debug.Log("We're now in phase: " + currentHealthPhase);
 
+        if(currentHealthPhase == 1)
+        {
+            Debug.Log("This is the popcorn one");
+        }
+        else if(currentHealthPhase == 2)
+        {
+            Debug.Log("Big death ray");
+        }
+        else if(currentHealthPhase == 3)
+        {
+            Debug.Log("Big light sphere");
+        }
+    }
 
 
 

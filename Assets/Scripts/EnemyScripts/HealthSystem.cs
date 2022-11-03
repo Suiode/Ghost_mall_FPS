@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HealthSystem : MonoBehaviour
 {
-    [SerializeField] float health = 100;
+    public float health = 100;
 
     [Header("If null, destroys the object holding this script")]
     [SerializeField] GameObject parent;
