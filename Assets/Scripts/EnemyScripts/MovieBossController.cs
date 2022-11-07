@@ -15,18 +15,15 @@ public class MovieBossController : MonoBehaviour
 
 
     [Header("Attacking and health")]
-    public float health = 100;
-    //[SerializeField] float[] healthPhases = {75, 50, 25};    
-    [SerializeField] List<float> healthPhasesList = new List<float>{75, 50, 25};
-    [SerializeField] int currentHealthPhase;
-    public GameObject player;
-    public GameManager gameManager;
+    public float health = 100;  
     public float enemySpeed = 10f;
     public float defaultMoveSpeed = 10f;
     public float attackDistance = 5f;
     public Animator anim;
     private bool currentlyAttacking;
     [SerializeField] private float groundSlamTime = 2f;
+    public GameObject player;
+    public GameManager gameManager;
     [SerializeField] MovieBasicAttack basicAttack;
     [SerializeField] HealthSystem healthSystem;
 
@@ -38,6 +35,14 @@ public class MovieBossController : MonoBehaviour
     [SerializeField] private float groundDistance = 0.1f;
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private MovieNavigation navController;
+
+    [Header("Health Phases")]
+    [SerializeField] List<float> healthPhasesList = new List<float> { 75, 50, 25 };
+    [SerializeField] int currentHealthPhase;
+    [SerializeField] float popcornAttackTimer;
+    [SerializeField] PopcornShooting popcornScript;
+    [SerializeField] List<string> phaseAnimName = new List<string>() { "Popcorn", "Blast", "Death" };
+    [SerializeField] List<float> phaseAnimTimes = new List<float>() {2.75f, 2.75f, 1f};
 
 
 
@@ -128,18 +133,16 @@ public class MovieBossController : MonoBehaviour
     {
         currentlyAttacking = true;
         anim.SetBool("Attacking", true);
-        anim.SetBool("Running", false);
-        navController.canWeMove = false;
         StartCoroutine(basicAttack.NormalAttack());
         yield return new WaitForSeconds(groundSlamTime);
         anim.SetBool("Attacking", false);
         currentlyAttacking = false;
-        navController.canWeMove = true;
     }
 
+    //Check the health script to make sure phases are changing as needed
     public void HealthCheck()
     {
-        if((currentHealthPhase < healthPhasesList.Count + 1) && (healthSystem.health < healthPhasesList[currentHealthPhase]))
+        if((healthSystem.health < healthPhasesList[currentHealthPhase]))
         {
             ChangePhases();
         }
@@ -147,23 +150,61 @@ public class MovieBossController : MonoBehaviour
 
     public void ChangePhases()
     {
+        currentlyAttacking = true;
         currentHealthPhase += 1;
         Debug.Log("We're now in phase: " + currentHealthPhase);
 
         if(currentHealthPhase == 1)
         {
+            
             Debug.Log("This is the popcorn one");
+            anim.SetBool("Popcorn", true);
+            StartCoroutine(PhaseTimer(phaseAnimTimes[currentHealthPhase -1], phaseAnimName[currentHealthPhase - 1]));
+            StartCoroutine(popcornScript.PopcornDestruction());
+
         }
         else if(currentHealthPhase == 2)
         {
             Debug.Log("Big death ray");
+            anim.SetBool("Blast", true);
+            StartCoroutine(PhaseTimer(phaseAnimTimes[currentHealthPhase - 1], phaseAnimName[currentHealthPhase - 1]));
         }
         else if(currentHealthPhase == 3)
         {
             Debug.Log("Big light sphere");
+            anim.SetBool("Popcorn", true);
+            StartCoroutine(PhaseTimer(phaseAnimTimes[currentHealthPhase - 1], phaseAnimName[currentHealthPhase - 1]));
         }
     }
 
 
+    public IEnumerator PhaseTimer(float time, string currentPhase)
+    {
+        StopRunning();
+        anim.SetBool(currentPhase, true);
+        
+        
+        Debug.Log("Now starting animation for phase: " + currentHealthPhase + " and this is the animation we played: " + currentPhase);
+        yield return new WaitForSeconds(time );
+        anim.SetBool(currentPhase, false);
+        StartRunning();
+        currentlyAttacking = false;
+    }
 
+
+
+
+
+
+    public void StopRunning()
+    {
+        anim.SetBool("Running", false);
+        navController.canWeMove = false;
+
+    }
+
+    public void StartRunning()
+    {
+        navController.canWeMove = true;
+    }
 }

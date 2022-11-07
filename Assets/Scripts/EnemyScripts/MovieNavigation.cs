@@ -23,7 +23,17 @@ public class MovieNavigation : MonoBehaviour
     {
         if (canWeMove)
         {
+            if(navMeshAgent.isStopped == true)
+            {
+                navMeshAgent.isStopped = false;
+            }
+
+
             navMeshAgent.destination = playerTrans.position;
+        }
+        else
+        {
+            navMeshAgent.isStopped = true;
         }
     }
 
