@@ -8,33 +8,19 @@ public class MovieNavigation : MonoBehaviour
     [SerializeField] private NavMeshAgent navMeshAgent;
     [SerializeField] private List<Vector3> nextPosition;
     [SerializeField] private Transform playerTrans;
-    public bool canWeMove = false;
+    public bool canWeMove = true;
 
 
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
 
     // Update is called once per frame
     void Update()
     {
         if (canWeMove)
         {
-            if(navMeshAgent.isStopped == true)
-            {
-                navMeshAgent.isStopped = false;
-            }
-
-
             navMeshAgent.destination = playerTrans.position;
         }
-        else
-        {
-            navMeshAgent.isStopped = true;
-        }
+
     }
 
     public IEnumerator moveToPosition(Vector3 newPosition)

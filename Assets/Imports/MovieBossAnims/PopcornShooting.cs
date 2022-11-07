@@ -32,9 +32,12 @@ public class PopcornShooting : MonoBehaviour
             foreach (Transform hand in hands)
             {
                 Vector3 targetDir = boss.transform.position - hand.transform.position;
-                angleBetween = Vector3.Angle(transform.forward, targetDir);
+                angleBetween = Vector3.Angle(hand.transform.forward, targetDir);
 
-                Instantiate(popcornKernel, hand.position, Quaternion.Euler(new Vector3(0, angleBetween + spawnAngleOffset, 0)));
+
+                //Instantiate(popcornKernel, hand.position, Quaternion.Euler(new Vector3(0, angleBetween + spawnAngleOffset, 0)));
+                Instantiate(popcornKernel, hand.position, Quaternion.Euler(new Vector3(0, (hand.transform.forward.y) + spawnAngleOffset, 0)));
+
             }
         }
     }

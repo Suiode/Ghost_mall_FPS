@@ -29,29 +29,6 @@ public class PopcornKernelScript : MonoBehaviour
     }
 
 
-    //public void OnTriggerEnter(Collider other)
-    //{
-    //    Debug.Log("Popcorn kernel trigger hit someone");
-
-    //    HealthSystem targetHealth = other.transform.GetComponentInParent<HealthSystem>();
-
-    //    if (targetHealth != null)
-    //    {
-    //        targetHealth.TakeDamage(damage);
-    //    }
-
-    //    //if(other.gameObject.tag == hittableObjects)
-    //    //{
-    //    //    Destroy(this.gameObject);
-    //    //}
-
-
-
-
-        
-    //    Debug.Log("Popcorn hit something");
-    //    Destroy(this.gameObject, 0);
-    //}
 
     public void OnCollisionEnter(Collision collision)
     {
@@ -64,17 +41,9 @@ public class PopcornKernelScript : MonoBehaviour
             targetHealth.TakeDamage(damage);
         }
 
-        //if (collision.gameObject.layer == hittableObjects)
-        //{
-        //    Destroy(this.gameObject);
-        //}
-
-
-
-
 
         Debug.Log("Popcorn hit something");
-        Destroy(this.gameObject, 0);
+        Destroy(this.gameObject);
     }
 
 }

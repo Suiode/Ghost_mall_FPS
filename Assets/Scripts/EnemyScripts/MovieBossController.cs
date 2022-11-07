@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class MovieBossController : MonoBehaviour
 {
@@ -30,11 +31,11 @@ public class MovieBossController : MonoBehaviour
 
     [Header("Movement and gravity")]
     private Vector3 velocity;
-    [SerializeField] private bool isGrounded = false;
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private float groundDistance = 0.1f;
-    [SerializeField] private LayerMask groundMask;
-    [SerializeField] private MovieNavigation navController;
+    //[SerializeField] private bool isGrounded = false;
+    //[SerializeField] private Transform groundCheck;
+    //[SerializeField] private float groundDistance = 0.1f;
+    //[SerializeField] private LayerMask groundMask;
+    [SerializeField] private NavMeshAgent navController;
 
     [Header("Health Phases")]
     [SerializeField] List<float> healthPhasesList = new List<float> { 75, 50, 25 };
@@ -54,6 +55,8 @@ public class MovieBossController : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player");
         gameManager = GameManager.FindObjectOfType<GameManager>();
+        navController = NavMeshAgent.FindObjectOfType<NavMeshAgent>();
+        navController.speed = defaultMoveSpeed;
         StartCoroutine(FOVRoutine());
 
 
@@ -64,17 +67,18 @@ public class MovieBossController : MonoBehaviour
     {
         if (canSeePlayer && !currentlyAttacking)
         {
-            navController.canWeMove = true;
-            anim.SetBool("Running", true);
-
-            if (Vector3.Distance(transform.position, player.transform.position) < attackDistance)
+            if(navController.remainingDistance < attackDistance)
             {
                 StartCoroutine(Attack());
             }
 
         }
 
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        if(navController.speed > 0)
+        {
+            anim.SetBool("Running", true);
+        }
+
 
         HealthCheck();
     }
@@ -131,12 +135,14 @@ public class MovieBossController : MonoBehaviour
 
     private IEnumerator Attack()
     {
+        StopRunning();
         currentlyAttacking = true;
         anim.SetBool("Attacking", true);
         StartCoroutine(basicAttack.NormalAttack());
         yield return new WaitForSeconds(groundSlamTime);
         anim.SetBool("Attacking", false);
         currentlyAttacking = false;
+        StartRunning();
     }
 
     //Check the health script to make sure phases are changing as needed
@@ -156,24 +162,20 @@ public class MovieBossController : MonoBehaviour
 
         if(currentHealthPhase == 1)
         {
-            
             Debug.Log("This is the popcorn one");
-            anim.SetBool("Popcorn", true);
             StartCoroutine(PhaseTimer(phaseAnimTimes[currentHealthPhase -1], phaseAnimName[currentHealthPhase - 1]));
             StartCoroutine(popcornScript.PopcornDestruction());
-
         }
         else if(currentHealthPhase == 2)
         {
             Debug.Log("Big death ray");
-            anim.SetBool("Blast", true);
             StartCoroutine(PhaseTimer(phaseAnimTimes[currentHealthPhase - 1], phaseAnimName[currentHealthPhase - 1]));
         }
         else if(currentHealthPhase == 3)
         {
             Debug.Log("Big light sphere");
-            anim.SetBool("Popcorn", true);
             StartCoroutine(PhaseTimer(phaseAnimTimes[currentHealthPhase - 1], phaseAnimName[currentHealthPhase - 1]));
+            StartCoroutine(popcornScript.PopcornDestruction());
         }
     }
 
@@ -185,10 +187,10 @@ public class MovieBossController : MonoBehaviour
         
         
         Debug.Log("Now starting animation for phase: " + currentHealthPhase + " and this is the animation we played: " + currentPhase);
-        yield return new WaitForSeconds(time );
+        yield return new WaitForSeconds(time);
         anim.SetBool(currentPhase, false);
-        StartRunning();
         currentlyAttacking = false;
+        StartRunning();
     }
 
 
@@ -198,13 +200,15 @@ public class MovieBossController : MonoBehaviour
 
     public void StopRunning()
     {
+        navController.speed = 0;
         anim.SetBool("Running", false);
-        navController.canWeMove = false;
+
 
     }
 
     public void StartRunning()
     {
-        navController.canWeMove = true;
+        navController.speed = 10f;
+
     }
 }

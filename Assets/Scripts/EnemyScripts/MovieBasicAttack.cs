@@ -48,41 +48,6 @@ public class MovieBasicAttack : MonoBehaviour
     {
         yield return new WaitForSeconds(attackWaitTime);
 
-
-        //Collider[] hitColliders = Physics.OverlapSphere(transform.position, range, targetLayers);
-        //HealthSystem healthSystem;
-
-
-
-
-        //if (hitColliders != null)
-        //{
-
-        //    foreach (var collider in hitColliders)
-        //    {
-        //        healthSystem = collider.transform.GetComponentInParent<HealthSystem>();
-
-
-
-        //        if (healthSystem != null && !noDupesColliders.Contains(collider))
-        //        {
-        //            healthSystem.TakeDamage(damageAmount);
-        //            noDupesColliders.Add(collider);
-        //        }
-
-
-
-
-
-        //    }
-
-        //    foreach (var collider in hitColliders)
-        //    {
-        //        if(!selfColliders.Contains(collider) || canHurtSelf)
-        //        noDupesColliders.Remove(collider);
-        //    }
-        //}
-
         Instantiate(smashShockwaveObj, (transform.position - new Vector3(0, 2.8f, 0)), Quaternion.Euler(new Vector3(-90, 0, 0)));
     }
 }
