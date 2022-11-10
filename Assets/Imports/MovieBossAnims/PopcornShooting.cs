@@ -6,7 +6,7 @@ public class PopcornShooting : MonoBehaviour
 {
     [SerializeField] GameObject popcornKernel;
     [SerializeField] Transform[] hands;
-    [SerializeField] GameObject boss;
+    [SerializeField] Transform boss;
     public bool shooting = false;
     [SerializeField] float waitBeforeShooting;
     [SerializeField] float endTime;
@@ -15,30 +15,43 @@ public class PopcornShooting : MonoBehaviour
 
 
 
+    [Header("Variables for popcorn attack")]
+    [SerializeField] float totalAttackTime = 1;
+    [SerializeField] int amountOfKernels = 30;
+    [SerializeField] float maxAngle = -60;
+    [SerializeField] float distanceFromPlayer = 2f;
+
+
+
+
 
 
     public IEnumerator PopcornDestruction()
     {
+
         yield return new WaitForSeconds(waitBeforeShooting);
-        float timer = 0;
 
+        
 
-        while(timer <= endTime)
+        for (int i = 1; i <= amountOfKernels; i++)
         {
             yield return null;
-            timer += Time.deltaTime;
+
+            float rotOffset = (Mathf.Abs(maxAngle + maxAngle) / amountOfKernels) * i;
+            float spawnRotation = (boss.transform.forward.y - maxAngle);
 
 
             foreach (Transform hand in hands)
             {
-                Vector3 targetDir = boss.transform.position - hand.transform.position;
-                angleBetween = Vector3.Angle(hand.transform.forward, targetDir);
-
-
-                //Instantiate(popcornKernel, hand.position, Quaternion.Euler(new Vector3(0, angleBetween + spawnAngleOffset, 0)));
-                Instantiate(popcornKernel, hand.position, Quaternion.Euler(new Vector3(0, (hand.transform.forward.y) + spawnAngleOffset, 0)));
+                
+                //Instantiate(popcornKernel, new Vector3(boss.transform.position.x, boss.transform.position.y, boss.transform.position.z), Quaternion.Euler(new Vector3(0, startDegrees + rotOffset, 0)));
+                Instantiate(popcornKernel, hand.position, Quaternion.Euler(new Vector3(0, boss.rotation.eulerAngles.y + ((-Mathf.Abs(maxAngle) + spawnAngleOffset) + rotOffset), 0)));
 
             }
+
+
         }
+
+        
     }
 }

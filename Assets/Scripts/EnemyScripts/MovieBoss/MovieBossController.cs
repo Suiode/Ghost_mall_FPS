@@ -30,11 +30,6 @@ public class MovieBossController : MonoBehaviour
 
 
     [Header("Movement and gravity")]
-    private Vector3 velocity;
-    //[SerializeField] private bool isGrounded = false;
-    //[SerializeField] private Transform groundCheck;
-    //[SerializeField] private float groundDistance = 0.1f;
-    //[SerializeField] private LayerMask groundMask;
     [SerializeField] private NavMeshAgent navController;
 
     [Header("Health Phases")]
@@ -44,6 +39,9 @@ public class MovieBossController : MonoBehaviour
     [SerializeField] PopcornShooting popcornScript;
     [SerializeField] List<string> phaseAnimName = new List<string>() { "Popcorn", "Blast", "Death" };
     [SerializeField] List<float> phaseAnimTimes = new List<float>() {2.75f, 2.75f, 1f};
+
+    [Header("Lights Controller")]
+    [SerializeField] MovieLightController lightController;
 
 
 
@@ -136,6 +134,7 @@ public class MovieBossController : MonoBehaviour
     private IEnumerator Attack()
     {
         StopRunning();
+        lightController.DefaultAttackColor();
         currentlyAttacking = true;
         anim.SetBool("Attacking", true);
         StartCoroutine(basicAttack.NormalAttack());
@@ -143,6 +142,7 @@ public class MovieBossController : MonoBehaviour
         anim.SetBool("Attacking", false);
         currentlyAttacking = false;
         StartRunning();
+        lightController.BackToDefault();
     }
 
     //Check the health script to make sure phases are changing as needed
@@ -183,6 +183,7 @@ public class MovieBossController : MonoBehaviour
     public IEnumerator PhaseTimer(float time, string currentPhase)
     {
         StopRunning();
+        lightController.DefaultAttackColor();
         anim.SetBool(currentPhase, true);
         
         
@@ -190,6 +191,7 @@ public class MovieBossController : MonoBehaviour
         yield return new WaitForSeconds(time);
         anim.SetBool(currentPhase, false);
         currentlyAttacking = false;
+        lightController.BackToDefault();
         StartRunning();
     }
 
@@ -202,13 +204,10 @@ public class MovieBossController : MonoBehaviour
     {
         navController.speed = 0;
         anim.SetBool("Running", false);
-
-
     }
 
     public void StartRunning()
     {
-        navController.speed = 10f;
-
+        navController.speed = defaultMoveSpeed;
     }
 }
