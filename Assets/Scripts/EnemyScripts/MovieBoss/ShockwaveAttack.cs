@@ -5,7 +5,7 @@ using UnityEngine;
 public class ShockwaveAttack : MonoBehaviour
 {
     [Header("Variables")]
-    [SerializeField] Vector3 maxGrowthSize = new Vector3 (750, 750, 500);
+    [SerializeField] Vector3 maxGrowthSize = new Vector3 (50, 50, 50);
     [SerializeField] float maxTime = 2f;
     [SerializeField] float damage = 25;
     [SerializeField] float knockbackForce;
@@ -26,37 +26,28 @@ public class ShockwaveAttack : MonoBehaviour
 
 
 
-
+    //Grow the edath ball until it reaches max size set in inspector
     public IEnumerator ShockwaveDisperse()
     {
         float timer = 0;
 
-
-        
         while (timer < maxTime)
         {
-
             yield return null;
-
-
             timer += Time.deltaTime;
-
-            //Debug.Log("New local scale is: " + shockwaveModel.transform.localScale);
-            //Debug.Log("Shockwave Timer: " + timer);
-
 
             shockwaveModel.transform.localScale = Vector3.Lerp(shockwaveModel.transform.localScale, maxGrowthSize, (timer / maxTime));
         }
-
         Destroy(gameObject);
     }
 
 
+    //Dealing damage
     public void OnTriggerEnter(Collider other)
     {
         Debug.Log("Shockwave hit someone");
 
-        HealthSystem targetHealth = other.transform.GetComponentInParent<HealthSystem>();
+        HealthSystem targetHealth = other.GetComponentInParent<HealthSystem>();
         CharacterController targetController = other.GetComponent<CharacterController>();
 
         if( targetHealth != null)

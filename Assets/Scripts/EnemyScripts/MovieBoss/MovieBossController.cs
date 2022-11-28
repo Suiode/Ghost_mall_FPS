@@ -26,7 +26,10 @@ public class MovieBossController : MonoBehaviour
     public GameObject player;
     public GameManager gameManager;
     [SerializeField] MovieBasicAttack basicAttack;
+    [SerializeField] PopcornShooting popcornScript;
+    [SerializeField] MovieDeathBall deathBallScript;
     [SerializeField] HealthSystem healthSystem;
+    [SerializeField] MovieBigRayAttack bigRayAttack;
 
 
     [Header("Movement and gravity")]
@@ -36,7 +39,6 @@ public class MovieBossController : MonoBehaviour
     [SerializeField] List<float> healthPhasesList = new List<float> { 75, 50, 25 };
     [SerializeField] int currentHealthPhase;
     [SerializeField] float popcornAttackTimer;
-    [SerializeField] PopcornShooting popcornScript;
     [SerializeField] List<string> phaseAnimName = new List<string>() { "Popcorn", "Blast", "Death" };
     [SerializeField] List<float> phaseAnimTimes = new List<float>() {2.75f, 2.75f, 1f};
 
@@ -148,42 +150,46 @@ public class MovieBossController : MonoBehaviour
     //Check the health script to make sure phases are changing as needed
     public void HealthCheck()
     {
-        if((healthSystem.health < healthPhasesList[currentHealthPhase]))
+        if((healthSystem.health <= healthPhasesList[currentHealthPhase]))
         {
             ChangePhases();
         }
     }
 
+
+    //Once health is below the point specified in healthPhasesList, kick off the appropriate phase
     public void ChangePhases()
     {
         currentlyAttacking = true;
         currentHealthPhase += 1;
         Debug.Log("We're now in phase: " + currentHealthPhase);
 
-        if(currentHealthPhase == 1)
+        if(currentHealthPhase == 1) //Popcorn attack
         {
             Debug.Log("This is the popcorn one");
             StartCoroutine(PhaseTimer(phaseAnimTimes[currentHealthPhase -1], phaseAnimName[currentHealthPhase - 1]));
             StartCoroutine(popcornScript.PopcornDestruction());
         }
-        else if(currentHealthPhase == 2)
+        else if(currentHealthPhase == 2) //Big boi ray
         {
             Debug.Log("Big death ray");
             StartCoroutine(PhaseTimer(phaseAnimTimes[currentHealthPhase - 1], phaseAnimName[currentHealthPhase - 1]));
+            StartCoroutine(bigRayAttack.bigRayAttack());
         }
-        else if(currentHealthPhase == 3)
+        else if(currentHealthPhase == 3) //Death
         {
             Debug.Log("Big light sphere");
             StartCoroutine(PhaseTimer(phaseAnimTimes[currentHealthPhase - 1], phaseAnimName[currentHealthPhase - 1]));
-            StartCoroutine(popcornScript.PopcornDestruction());
+            StartCoroutine(deathBallScript.DeathBallStart());
         }
     }
 
 
+    //Actually starting the next phase. Setting the correct animations and timers
     public IEnumerator PhaseTimer(float time, string currentPhase)
     {
         StopRunning();
-        lightController.DefaultAttackColor();
+        lightController.DefaultAttackColor(3);
         anim.SetBool(currentPhase, true);
         
         
@@ -191,7 +197,7 @@ public class MovieBossController : MonoBehaviour
         yield return new WaitForSeconds(time);
         anim.SetBool(currentPhase, false);
         currentlyAttacking = false;
-        lightController.BackToDefault();
+        lightController.BackToDefault(3);
         StartRunning();
     }
 
@@ -199,7 +205,7 @@ public class MovieBossController : MonoBehaviour
 
 
 
-
+    //Stop and start the character from running
     public void StopRunning()
     {
         navController.speed = 0;

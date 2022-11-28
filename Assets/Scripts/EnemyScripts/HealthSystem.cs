@@ -12,6 +12,8 @@ public class HealthSystem : MonoBehaviour
     [Header("If true, death of this object will slow down time for others that can be affected")]
     public bool affectedBySlowdown;
     [SerializeField] GameManager gameManager;
+    [SerializeField] Rigidbody rb;
+    [SerializeField] float timeToDissappear;
 
 
 
@@ -22,6 +24,8 @@ public class HealthSystem : MonoBehaviour
         {
             gameManager = FindObjectOfType<GameManager>();
         }
+
+        rb = GetComponent<Rigidbody>();
     }
 
 
@@ -34,7 +38,7 @@ public class HealthSystem : MonoBehaviour
         if (health <= 0)
         {
 
-            if(affectedBySlowdown)
+            if (affectedBySlowdown)
                 gameManager.StartSlowDown();
 
 
@@ -43,14 +47,15 @@ public class HealthSystem : MonoBehaviour
     }
 
 
+
     void Die()
     {
-        if(parent != null)
+       if(rb != null)
         {
-            Destroy(parent);
+            rb.constraints = RigidbodyConstraints.None;
+            rb.useGravity = true;
         }
 
-
-        Destroy(this.gameObject);
+        Destroy(this.gameObject, timeToDissappear);
     }
 }

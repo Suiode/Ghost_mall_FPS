@@ -6,8 +6,6 @@ public class MovieBasicAttack : MonoBehaviour
 {
 
     [Header("Attack variables")]
-    [SerializeField] float range = 5f;
-    [SerializeField] float damageAmount = 5f;
     [SerializeField] float attackWaitTime = 0.5f;
 
 
@@ -24,24 +22,24 @@ public class MovieBasicAttack : MonoBehaviour
     [Header("You can add colliders to avoid hitting them")]
     [SerializeField] List<Collider> noDupesColliders;
 
-    public void Start()
-    {
-        Collider[] startColliders = gameObject.GetComponentsInChildren<Collider>();
+    //public void Start()
+    //{
+    //    Collider[] startColliders = gameObject.GetComponentsInChildren<Collider>();
 
-        foreach(Collider newCollider in startColliders)
-        {
-            selfColliders.Add(newCollider);
-        }
+    //    foreach(Collider newCollider in startColliders)
+    //    {
+    //        selfColliders.Add(newCollider);
+    //    }
 
-        if (!canHurtSelf)
-        {
-            foreach(var collider in selfColliders)
-            {
-                noDupesColliders.Add(collider);
-            }
-        }
+    //    if (!canHurtSelf)
+    //    {
+    //        foreach(var collider in selfColliders)
+    //        {
+    //            noDupesColliders.Add(collider);
+    //        }
+    //    }
 
-    }
+    //}
 
 
     public IEnumerator NormalAttack()

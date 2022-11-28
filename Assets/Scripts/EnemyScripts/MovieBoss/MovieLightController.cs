@@ -24,21 +24,40 @@ public class MovieLightController : MonoBehaviour
 
 
 
-    public void ChangeColor(Color newColor)
+    public IEnumerator ChangeColor(Color newColor, float maxTimerTime = 0)
     {
         previousLightColor = forwardLight.color;
 
-        forwardLight.color = newColor;
-        lampLight.color = newColor;
+
+        if(maxTimerTime > 0)
+        {
+            float timer = 0;
+
+
+            while(timer <= maxTimerTime)
+            {
+                yield return null; 
+
+                timer += Time.deltaTime;
+
+                forwardLight.color = Color.Lerp(forwardLight.color, newColor, timer/maxTimerTime);
+                lampLight.color = Color.Lerp(lampLight.color, newColor, timer/maxTimerTime);
+            }
+        }
+        else
+        {
+            forwardLight.color = newColor;
+            lampLight.color = newColor;
+        }
     }
 
-    public void BackToDefault()
+    public void BackToDefault(float maxTimerTime = 0)
     {
-        ChangeColor(defaultLightColor);
+         StartCoroutine(ChangeColor(defaultLightColor, maxTimerTime));
     }
 
-    public void DefaultAttackColor()
+    public void DefaultAttackColor(float maxTimerTime = 0)
     {
-        ChangeColor(attackLightColor);
+        StartCoroutine(ChangeColor(attackLightColor, maxTimerTime));
     }
 }
