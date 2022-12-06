@@ -32,8 +32,6 @@ public class GameManager : MonoBehaviour
             instance = this;
         }
 
-        QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = maxFrameRate;
     }
     
     public void StartSlowDown()
@@ -75,7 +73,7 @@ public class GameManager : MonoBehaviour
             //Debug.Log("WaitForSeconds completed successfully");
             if (slowDownTimer <= 0)
             {
-                for (int i = 0; i < enemies.Length; i++)
+                for (int i = 0; i < enemies.Length -1; i++)
                 {
                     enemies = GameObject.FindGameObjectsWithTag("Enemy");
                     GhostFace enemyScript = enemies[i].GetComponent<GhostFace>();

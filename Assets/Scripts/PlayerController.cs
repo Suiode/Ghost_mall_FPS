@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -71,10 +72,10 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
-        {
-            StartCoroutine(Jump());
-        }
+        //if (Input.GetButtonDown("Jump") && isGrounded)
+        //{
+            
+        //}
 
 
         //Dash
@@ -95,28 +96,37 @@ public class PlayerController : MonoBehaviour
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-        //if (velocity.y > currentGravity)
-        //{
-        //    velocity.y += currentGravity;
-        //}
-        //else
-        //{
+
+
+        //Apply gravity, and only until a top speed set by currentGravity
         velocity.y += currentGravity;
 
         if(velocity.y < currentGravity)
         {
             velocity.y = currentGravity;
         }
-        //}
+
 
         Vector3 move = (transform.right * x) * moveSpeed + (transform.forward * z) * moveSpeed + (velocity);
 
         controller.Move(move * Time.deltaTime);
 
-        //controller.Move(velocity * Time.deltaTime);
     }
 
-    private IEnumerator Jump()
+
+    public void JumpEvent(InputAction.CallbackContext context)
+    {
+        
+
+        if (isGrounded && context.performed)
+        {
+
+            StartCoroutine(Jump());
+        }
+    }
+
+
+    public IEnumerator Jump()
     {
         float timer = 0;
         moveSpeed *= 2f;
