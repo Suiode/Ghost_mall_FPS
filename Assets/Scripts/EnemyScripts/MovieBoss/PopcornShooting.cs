@@ -45,7 +45,7 @@ public class PopcornShooting : MonoBehaviour
             {
                 
                 //Instantiate(popcornKernel, new Vector3(boss.transform.position.x, boss.transform.position.y, boss.transform.position.z), Quaternion.Euler(new Vector3(0, startDegrees + rotOffset, 0)));
-                Instantiate(popcornKernel, hand.position, Quaternion.Euler(new Vector3(0, boss.rotation.eulerAngles.y + ((-Mathf.Abs(maxAngle) + spawnAngleOffset) + rotOffset), 0)));
+                Instantiate(popcornKernel, new Vector3(hand.position.x, hand.position.y -0.5f, hand.position.z), Quaternion.Euler(new Vector3(0, boss.rotation.eulerAngles.y + ((-Mathf.Abs(maxAngle) + spawnAngleOffset) + rotOffset), 0)));
 
             }
 

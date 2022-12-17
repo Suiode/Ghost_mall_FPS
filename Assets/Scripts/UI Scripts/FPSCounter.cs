@@ -14,22 +14,40 @@ public class FPSCounter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //if (FPSCounterToggle.isOn)
-        //{
-        //    this.gameObject.SetActive(true);
-        //}
-        //else
-        //{
-        //    this.gameObject.SetActive(false);
-        //}
+        if (FPSCounterToggle.isOn)
+        {
+            this.gameObject.SetActive(true);
+            StartCoroutine(CounterOn());
+        }
+        else
+        {
+            this.gameObject.SetActive(false);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+
+
+    public void FPSToggle()
     {
+        if(FPSCounterToggle.isOn)
+        {
+            fpsText.enabled = true;
+            StartCoroutine(CounterOn());
+        }
+        else
+        {
+            fpsText.enabled = false;
+            StopCoroutine(CounterOn());
+        }
+    }
 
-            float FPSfloat = (int)(1f / Time.unscaledDeltaTime);
+    private IEnumerator CounterOn()
+    {
+        while (FPSCounterToggle.isOn)
+        {
+            yield return null;
+            float FPSfloat = (int)(1f / Time.smoothDeltaTime);
             fpsText.text = FPSfloat.ToString();
-
+        }
     }
 }

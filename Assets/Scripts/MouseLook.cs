@@ -6,16 +6,20 @@ using TMPro;
 
 public class MouseLook : MonoBehaviour
 {
-
-    public float mouseX;
-    public float mouseY;
-    //public bool linkedXY = true;
-    //public Slider mouseSensitivityX;
-    //public Slider mouseSensitivityY;
-    //public TMP_InputField mouseSensXNum;
-    //public TMP_InputField mouseSensYNum;
+    [Header("UI tools")]
+    [SerializeField] bool linkedXY = true;
+    public Slider sensXSlider;
+    public Slider sensYSlider;
+    public TMP_InputField sensXInput;
+    public TMP_InputField sensYInput;
     public Camera playerCam;
+    [SerializeField] Button linkButton;
+    [SerializeField] Sprite linkEnabledImg;
+    [SerializeField] Sprite linkDisabledImg;
 
+
+
+    [Header("Player objects")]
     public Transform playerBody;
     public Transform eyes;
 
@@ -25,33 +29,43 @@ public class MouseLook : MonoBehaviour
     float xRotation;
     float yRotation;
 
+    [SerializeField] GameManager gameManager;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
+        if(playerBody != null)
+        { Cursor.lockState = CursorLockMode.Locked; }
+
+
+        yMouseSens = gameManager.mouseYSens;
+        xMouseSens = gameManager.mouseXSens;
+
+        sensXInput.text = xMouseSens.ToString();
+        sensYInput.text = yMouseSens.ToString();
+        UpdateValueFromInputX();
+        UpdateValueFromInputY();
     }
 
     // Update is called once per frame
     void Update()
     {
-        //xMouseSens = xMouseSens * mouseSensitivity.value;
-        //yMouseSens = yMouseSens * mouseSensitivity.value;
-        //mouseX = Input.GetAxis("Mouse X") * (xMouseSens * mouseSensitivityX.value)/10 * Time.deltaTime;
-        //mouseY = Input.GetAxis("Mouse Y") * (yMouseSens * mouseSensitivityY.value)/10 * Time.deltaTime;
-        mouseX = Input.GetAxis("Mouse X") * (xMouseSens) * Time.deltaTime;
-        mouseY = Input.GetAxis("Mouse Y") * (yMouseSens) * Time.deltaTime;
+        float mouseX = Input.GetAxis("Mouse X") * (xMouseSens) / 10 * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * (yMouseSens) / 10 * Time.deltaTime;
+
 
         xRotation -= mouseY;
         yRotation += mouseX;
 
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
-        transform.localRotation = Quaternion.Euler(0, yRotation, 0);
-        eyes.transform.localRotation = Quaternion.Euler(xRotation, 0, 0); ;
+        if (playerBody != null && eyes != null)
+        {
+            transform.localRotation = Quaternion.Euler(0, yRotation, 0);
+            eyes.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+        }
 
-        //Test to see if we can get rid of forward momentum when looking up
-        //playerCam.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
 
         /*if (PauseScript.gameIsPaused)
         {
@@ -65,57 +79,82 @@ public class MouseLook : MonoBehaviour
 
 
 
-    /*public void UpdateValueFromFloatX(float value)
+    public void UpdateValueFromSliderX()
     {
-        value = Mathf.Round(value * 10) / 10;
-        if (mouseSensitivityX) { mouseSensitivityX.value = value; }
-        if (mouseSensXNum) { mouseSensXNum.text = value.ToString(); }
-
-        if(linkedXY)
-        {
-            if (mouseSensitivityY) { mouseSensitivityY.value = value; }
-            if (mouseSensYNum) { mouseSensYNum.text = value.ToString(); }
-        }
-    }
-
-    public void UpdateValueFromStringX(string value)
-    {
-        value = string.Format("{0:0.##}", value);
-        if (mouseSensitivityX) { mouseSensitivityX.value = float.Parse(value); }
-        if (mouseSensXNum) { mouseSensXNum.text = value; }
+        float newSens = Mathf.Round(sensXSlider.value * 10) / 10;
+        sensXSlider.value = newSens;
+        sensXInput.text = newSens.ToString();
+        gameManager.mouseXSens = newSens;
+        xMouseSens = newSens;
 
         if (linkedXY)
         {
-            if (mouseSensitivityY) { mouseSensitivityY.value = float.Parse(value); }
-            if (mouseSensYNum) { mouseSensYNum.text = value; }
+            sensYSlider.value = newSens;
+            sensYInput.text = newSens.ToString();
+            yMouseSens = newSens;
         }
+    }
+
+    public void UpdateValueFromInputX()
+    {
+        string newSens = string.Format("{0:0.##}", sensXInput.text);
+        bool canParse = float.TryParse(newSens, out float newSensFloat);
+
+        if (canParse)
+        {
+            sensXSlider.value = newSensFloat;
+            sensXInput.text = newSensFloat.ToString();
+            gameManager.mouseXSens = newSensFloat;
+            xMouseSens = newSensFloat;
+
+            if (linkedXY)
+            {
+                sensYSlider.value = newSensFloat;
+                sensYInput.text = newSensFloat.ToString();
+                yMouseSens = newSensFloat;
+            }
+        }
+
+        
 
     }
 
 
-    public void UpdateValueFromFloatY(float value)
+    public void UpdateValueFromSliderY()
     {
-        value = Mathf.Round(value * 10) / 10;
-        if (mouseSensitivityY) { mouseSensitivityY.value = value; }
-        if (mouseSensYNum) { mouseSensYNum.text = value.ToString(); }
+        float newSens = Mathf.Round(sensYSlider.value * 10) / 10;
+        sensYSlider.value = newSens;
+        sensYInput.text = newSens.ToString();
+        gameManager.mouseYSens = newSens;
+        yMouseSens = newSens;
 
         if (linkedXY)
         {
-            if (mouseSensitivityX) { mouseSensitivityX.value = value; }
-            if (mouseSensXNum) { mouseSensXNum.text = value.ToString(); }
+            sensXSlider.value = newSens;
+            sensXInput.text = newSens.ToString();
+            xMouseSens = newSens;
         }
     }
 
-    public void UpdateValueFromStringY(string value)
+    public void UpdateValueFromInputY()
     {
-        value = string.Format("{0:0.##}", value);
-        if (mouseSensitivityY) { mouseSensitivityY.value = float.Parse(value); }
-        if (mouseSensYNum) { mouseSensYNum.text = value; }
+        string newSens = string.Format("{0:0.##}", sensYInput.text);
+        bool canParse = float.TryParse(newSens, out float newSensFloat);
 
-        if (linkedXY)
+        if (canParse)
         {
-            if (mouseSensitivityX) { mouseSensitivityX.value = float.Parse(value); }
-            if (mouseSensXNum) { mouseSensXNum.text = value; }
+            sensYSlider.value = newSensFloat;
+            sensYInput.text = newSensFloat.ToString();
+            gameManager.mouseYSens = newSensFloat;
+            yMouseSens = newSensFloat;
+
+
+            if (linkedXY)
+            {
+                sensXSlider.value = newSensFloat;
+                sensXInput.text = newSensFloat.ToString();
+                xMouseSens = newSensFloat;
+            }
         }
     }
 
@@ -124,12 +163,19 @@ public class MouseLook : MonoBehaviour
         if(linkedXY)
         {
             linkedXY = false;
+            linkButton.image.sprite = linkDisabledImg;
         }
         else
         {
             linkedXY = true;
+            UpdateValueFromInputX();
+            linkButton.image.sprite = linkEnabledImg;
         }
-    }*/
+
+        
+    }
+
+
 
 }
 

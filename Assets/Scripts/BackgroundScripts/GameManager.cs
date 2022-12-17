@@ -4,16 +4,20 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public int maxFrameRate = 60;
     public static GameManager instance;
 
 
     //Slow down variables for ghosts
+    [Header("Enemy variables")]
     public bool slowDownActive;
     [SerializeField] private float slowDownLength = 2f;
     [SerializeField] private float slowDownTimer = 2f;
+    public MovieLightController movieBossLights;
 
 
+    [Header("Player Settings")]
+    public float mouseXSens;
+    public float mouseYSens;
 
     //public PauseScript pauseScript;
 
@@ -41,8 +45,23 @@ public class GameManager : MonoBehaviour
             StartCoroutine(SlowDownEnemies());
         }
         else
+        {
             slowDownTimer = slowDownLength;
+            RecountEnemies();
+        }
 
+
+
+    }
+
+    public void RecountEnemies()
+    {
+        GhostFace[] ghosts = FindObjectsOfType<GhostFace>();
+
+        if (ghosts.Length == 1)
+        {
+            movieBossLights.BackToDefault(3);
+        }
 
     }
 
@@ -53,14 +72,19 @@ public class GameManager : MonoBehaviour
         slowDownTimer = slowDownLength;
         slowDownActive = true;
 
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        GhostFace[] ghosts = FindObjectsOfType<GhostFace>();
+
+        if (ghosts.Length == 1)
+        {
+            movieBossLights.BackToDefault(3);
+        }
 
         //Tell enemies to slow down
-        for (int i = 0; i < enemies.Length; i++)
+        foreach (GhostFace ghostie in ghosts)
         {
-            GhostFace enemyScript = enemies[i].GetComponent<GhostFace>();
-            enemyScript.SlowDownTime();
+            ghostie.SlowDownTime();
             Debug.Log("Slowing down for ghosties");
+
         }
 
         while (slowDownActive)
@@ -73,10 +97,9 @@ public class GameManager : MonoBehaviour
             //Debug.Log("WaitForSeconds completed successfully");
             if (slowDownTimer <= 0)
             {
-                for (int i = 0; i < enemies.Length -1; i++)
+                for (int i = 0; i < ghosts.Length; i++)
                 {
-                    enemies = GameObject.FindGameObjectsWithTag("Enemy");
-                    GhostFace enemyScript = enemies[i].GetComponent<GhostFace>();
+                    GhostFace enemyScript = ghosts[i].GetComponent<GhostFace>();
                     enemyScript.BackToNormalTime();
                     Debug.Log("Back to normal time");
                     slowDownActive = false;

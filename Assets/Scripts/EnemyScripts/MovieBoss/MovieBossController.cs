@@ -9,17 +9,16 @@ public class MovieBossController : MonoBehaviour
     [Header("Field of View Variables")] 
     [SerializeField] private float viewRadius = 60;
     [SerializeField] private float viewAngle = 45f;
-    private bool canSeePlayer = false;
+    [SerializeField]private bool canSeePlayer = false;
     [SerializeField] private LayerMask targetMask;
     [SerializeField] private LayerMask wallsMask;
     [SerializeField] private Vector3 rotationOffset;
 
 
     [Header("Attacking and health")]
-    public float health = 100;  
     public float enemySpeed = 10f;
-    public float defaultMoveSpeed = 10f;
-    public float attackDistance = 5f;
+    [SerializeField] float defaultMoveSpeed = 10f;
+    [SerializeField] float attackDistance = 5f;
     public Animator anim;
     private bool currentlyAttacking;
     [SerializeField] private float groundSlamTime = 2f;
@@ -56,9 +55,11 @@ public class MovieBossController : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         gameManager = GameManager.FindObjectOfType<GameManager>();
         navController = NavMeshAgent.FindObjectOfType<NavMeshAgent>();
-        navController.speed = defaultMoveSpeed;
+        navController.speed = 0;
         StartCoroutine(FOVRoutine());
+        StartCoroutine(Idle());
 
+        gameManager.movieBossLights = lightController;
 
     }
 
@@ -72,6 +73,7 @@ public class MovieBossController : MonoBehaviour
                 StartCoroutine(Attack());
             }
 
+            navController.speed = defaultMoveSpeed;
         }
 
         if(navController.speed > 0)
@@ -112,6 +114,9 @@ public class MovieBossController : MonoBehaviour
                     if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, wallsMask))
                     {
                         canSeePlayer = true;
+
+                        if(!currentlyAttacking)
+                        StartRunning();
                     }
                     else
                         canSeePlayer = false;
@@ -181,6 +186,7 @@ public class MovieBossController : MonoBehaviour
             Debug.Log("Big light sphere");
             StartCoroutine(PhaseTimer(phaseAnimTimes[currentHealthPhase - 1], phaseAnimName[currentHealthPhase - 1]));
             StartCoroutine(deathBallScript.DeathBallStart());
+            StartCoroutine(LosingSteam());
         }
     }
 
@@ -215,5 +221,29 @@ public class MovieBossController : MonoBehaviour
     public void StartRunning()
     {
         navController.speed = defaultMoveSpeed;
+    }
+
+    public IEnumerator Idle()
+    {
+        lightController.ChangeColor(Color.black);
+
+
+        while(!canSeePlayer)
+        {
+            yield return null;
+
+            if (canSeePlayer)
+            {
+                Attack();
+                break;
+            }
+        }
+
+    }
+
+    public IEnumerator LosingSteam()
+    {
+        yield return new WaitForSeconds(1f);
+        healthSystem.TakeDamage(2000);
     }
 }

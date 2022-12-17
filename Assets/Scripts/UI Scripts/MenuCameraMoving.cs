@@ -23,15 +23,6 @@ public class MenuCameraMoving : MonoBehaviour
             Transform oldCamTransform = camera.transform;
             Vector3 oldCamPos = oldCamTransform.position;
 
-            //float oldX = UnityEditor.TransformUtils.GetInspectorRotation(oldCamTransform).x;
-            //float oldY = UnityEditor.TransformUtils.GetInspectorRotation(oldCamTransform).y;
-            //float oldZ = UnityEditor.TransformUtils.GetInspectorRotation(oldCamTransform).z;
-
-            //float newX = UnityEditor.TransformUtils.GetInspectorRotation(newCamPosList[i].transform).x;
-            //float newY = UnityEditor.TransformUtils.GetInspectorRotation(newCamPosList[i].transform).y;
-            //float newZ = UnityEditor.TransformUtils.GetInspectorRotation(newCamPosList[i].transform).z;
-
-
 
             float oldX = oldCamTransform.transform.localEulerAngles.x % 360;
             float oldY = oldCamTransform.transform.localEulerAngles.y % 360;
@@ -59,8 +50,7 @@ public class MenuCameraMoving : MonoBehaviour
 
 
                 //Max time is divided by the number of positions in newCamPosList. Then current time is divided by that to make sure no matter how many positions we have, it always takes the same amount of time
-                //camera.transform.eulerAngles = Vector3.Lerp(oldCamRot, newCamRot, (changeTime / (defaultChangeTime / newCamPosList.Length)));
-                camera.transform.rotation = Quaternion.Lerp( Quaternion.Euler(oldCamRot), Quaternion.Euler(newCamRot), (changeTime / (defaultChangeTime / newCamPosList.Length)));
+                camera.transform.rotation = Quaternion.Lerp(Quaternion.Euler(oldCamRot), Quaternion.Euler(newCamRot), (changeTime / (defaultChangeTime / newCamPosList.Length)));
                 
 
 

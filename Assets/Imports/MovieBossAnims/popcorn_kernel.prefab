@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
-  movementSpeed: 40
+  movementSpeed: 60
   rb: {fileID: 3043651075579867597}
   invulnTime: 0.05
   spawnTime: 0

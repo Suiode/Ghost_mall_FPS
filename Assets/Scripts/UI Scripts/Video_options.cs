@@ -39,7 +39,8 @@ public class Video_options : MonoBehaviour
     void Start()
     {
         defaultUnityResolutions = Screen.resolutions;
-
+        framerateTarget = Screen.currentResolution.refreshRate;
+        framerateInputField.text = framerateTarget.ToString();
 
 
 
@@ -60,11 +61,12 @@ public class Video_options : MonoBehaviour
             }
 
 
-            //Ties the shortened list to the full list from Unity
-            if (defaultUnityResolutions[i].width == Screen.width && defaultUnityResolutions[i].height == Screen.height && !optionsList.Contains(defaultUnityResolutions[i].width + " x " + defaultUnityResolutions[i].height))
+            //Checks current resolution and sets the dropdown to the same
+            if (defaultUnityResolutions[i].width == Screen.width && defaultUnityResolutions[i].height == Screen.height && optionsList.Contains(defaultUnityResolutions[i].width + " x " + defaultUnityResolutions[i].height))
             {
                 currentResolutionIndex = i;
-                previousRes = currentResolutionIndex;
+                //previousRes = currentResolutionIndex;
+                //Debug.Log("Resolution at startup is: " + defaultUnityResolutions[shortResolutionList[i]]);
             }
         }
 
@@ -99,23 +101,38 @@ public class Video_options : MonoBehaviour
         QualitySettings.vSyncCount = vSyncDropdown.value;
 
 
-        //If 
-        if(QualitySettings.vSyncCount == 1 || QualitySettings.vSyncCount == 2)
+        //Toggle based on current settings
+        if (QualitySettings.vSyncCount == 1 || QualitySettings.vSyncCount == 2)
         {
-            framerateInputField.enabled = false;
+            framerateInputField.interactable = false;
+
+
+            //Show the current framerate when vsync is enabled
+            if (vSyncDropdown.value == 2)
+            {
+                framerateInputField.text = (Screen.currentResolution.refreshRate/2).ToString();
+            }
+            else if(vSyncDropdown.value == 1)
+            {
+                framerateInputField.text = Screen.currentResolution.refreshRate.ToString();
+            }
         }
-        else {
-            framerateInputField.enabled = true;
+        else 
+        {
+            framerateInputField.interactable = true;
+            framerateInputField.text = framerateTarget.ToString();
+            FramerateChange();
         }
 
     }
+   
 
 
     public void FramerateChange()
     {
         Debug.Log("Changed framerate to: " + framerateInputField.text);
+        framerateTarget = int.Parse(framerateInputField.text);
         Application.targetFrameRate = int.Parse(framerateInputField.text);
-
     }
 
 
