@@ -9,6 +9,9 @@ public class PopcornKernelScript : MonoBehaviour
     [SerializeField] Rigidbody rb;
     [SerializeField] float invulnTime;
     [SerializeField] float spawnTime;
+    [SerializeField] float deathTime = 1;
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] PauseScript pauseScript;
 
 
  
@@ -18,14 +21,19 @@ public class PopcornKernelScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        pauseScript = FindObjectOfType<PauseScript>();
         Physics.IgnoreLayerCollision(this.gameObject.layer, 7, true);
+        audioSource = transform.GetComponent<AudioSource>();
         spawnTime = Time.time;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        rb.AddForce((transform.forward) * movementSpeed);
+        if (!pauseScript.isPaused)
+        {
+            rb.AddForce((transform.forward) * movementSpeed);
+        }
         
     }
 
@@ -33,8 +41,9 @@ public class PopcornKernelScript : MonoBehaviour
 
     public void OnCollisionEnter(Collision collision)
     {
-        
+
         //Debug.Log("Popcorn kernel trigger hit: " + collision.transform.name);
+        audioSource.Play();
 
         HealthSystem targetHealth = collision.transform.GetComponentInParent<HealthSystem>();
 
@@ -48,7 +57,8 @@ public class PopcornKernelScript : MonoBehaviour
 
         if(Time.time >= spawnTime + invulnTime)
         {
-            Destroy(this.gameObject);
+
+            Destroy(this.gameObject, deathTime);
         }
         
 

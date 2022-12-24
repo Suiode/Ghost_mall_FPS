@@ -33,11 +33,12 @@ public class MouseLook : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    public void Start()
     {
         if(playerBody != null)
         { Cursor.lockState = CursorLockMode.Locked; }
 
+        gameManager = FindObjectOfType<GameManager>();
 
         yMouseSens = gameManager.mouseYSens;
         xMouseSens = gameManager.mouseXSens;
@@ -46,6 +47,7 @@ public class MouseLook : MonoBehaviour
         sensYInput.text = yMouseSens.ToString();
         UpdateValueFromInputX();
         UpdateValueFromInputY();
+        Debug.Log("Did this reload on the scene change?");
     }
 
     // Update is called once per frame
@@ -66,14 +68,6 @@ public class MouseLook : MonoBehaviour
             eyes.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
         }
 
-
-        /*if (PauseScript.gameIsPaused)
-        {
-            Cursor.lockState = CursorLockMode.None;
-        }
-        else if (!PauseScript.gameIsPaused)
-            Cursor.lockState = CursorLockMode.Locked;
-        */
 
     }
 
@@ -171,11 +165,23 @@ public class MouseLook : MonoBehaviour
             UpdateValueFromInputX();
             linkButton.image.sprite = linkEnabledImg;
         }
-
-        
     }
 
 
+
+    public void SyncMouseWithGameManager()
+    {
+
+        gameManager = FindObjectOfType<GameManager>();
+
+        yMouseSens = gameManager.mouseYSens;
+        xMouseSens = gameManager.mouseXSens;
+
+        sensXInput.text = xMouseSens.ToString();
+        sensYInput.text = yMouseSens.ToString();
+        UpdateValueFromInputX();
+        UpdateValueFromInputY();
+    }
 
 }
 

@@ -19,17 +19,12 @@ public class Interactable : MonoBehaviour
 
     private void Start()
     {
-        //interactCollider.radius = radius;
-        //sphereCollider.radius = radius;
         player = PlayerController.FindObjectOfType<PlayerController>();
     }
 
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.F) && interactPromptTransform.active && canPlayerInteract)
-            InteractExecute();
-
         CheckObjectsInRange();
     }
 
@@ -68,20 +63,6 @@ public class Interactable : MonoBehaviour
     {
         interactPromptTransform.SetActive(false);
     }
-    
 
-    private void InteractExecute()
-    {
-        if (!player.godMode)
-        {
-            player.GodMode();
-            playerHand.SetActive(false);
-        }
-        else
-        {
-            player.GodMode();
-            playerHand.SetActive(true);
-        }
 
-    }
 }

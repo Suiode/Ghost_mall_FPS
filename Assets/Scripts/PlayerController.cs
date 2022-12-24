@@ -44,6 +44,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Camera playerCam;
     [SerializeField] private Transform playerTransform;
     [SerializeField] private CharacterController controller;
+    [SerializeField] PauseScript pauseScript;
 
     [Header("Misc")]
     public bool godMode = false;
@@ -52,38 +53,24 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-
+        pauseScript = FindObjectOfType<PauseScript>();
     }
 
     // Update is called once per frame
     void Update()
     {
-
-
-        if (!godMode)
+        if (!pauseScript.isPaused)
         {
             MovementSystem();
             isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-            //HealthSystem();
+
+
+            //Dash
+            if ((Input.GetKeyDown(KeyCode.LeftShift) && !dashing))
+            {
+                StartCoroutine(Dash(moveSpeed));
+            }
         }
-        else
-        {
-            GodModeMovement();
-        }
-
-
-        //if (Input.GetButtonDown("Jump") && isGrounded)
-        //{
-            
-        //}
-
-
-        //Dash
-        if ((Input.GetKeyDown(KeyCode.LeftShift) && !dashing))
-        {
-            StartCoroutine(Dash(moveSpeed));
-        }
-
 
     }
 
@@ -165,13 +152,6 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    void Die()
-    {
-        //Currently commented out, but will be enabled when pausing is enabled
-        //pauseScript.GameOver();
-    }
-
-
     
     IEnumerator WaitForHealthRegen(float waitBeforeHealthRegens)
     {
@@ -179,57 +159,42 @@ public class PlayerController : MonoBehaviour
         canRegainHealth = true;
     }
 
-
-
-
-
-    public void GodMode()
+    void Die()
     {
-
-        if (!godMode)
-        {
-            godMode = true;
-            currentGravity = 0;
-    
-        }
-        else
-        {
-            currentGravity = defaultGravity;
-            godMode = false;
-            Debug.Log("GodMode is disabled. Gravity is now set to " + currentGravity);
-        }
-
+        pauseScript.GameOver();
     }
 
 
-    private void GodModeMovement()
-    {
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
 
 
-        Vector3 move = transform.right * x + transform.forward * z;
-        controller.Move(move * moveSpeed * Time.deltaTime);
-
-        if (Input.GetKey(KeyCode.E))
-            velocity.y += (moveSpeed * Time.deltaTime) * 2;
-
-        if (Input.GetKey(KeyCode.Q))
-            velocity.y -= (moveSpeed * Time.deltaTime) * 2;
+    //private void GodModeMovement()
+    //{
+    //    float x = Input.GetAxis("Horizontal");
+    //    float z = Input.GetAxis("Vertical");
 
 
-        controller.Move(velocity * Time.deltaTime);
+    //    Vector3 move = transform.right * x + transform.forward * z;
+    //    controller.Move(move * moveSpeed * Time.deltaTime);
+
+    //    if (Input.GetKey(KeyCode.E))
+    //        velocity.y += (moveSpeed * Time.deltaTime) * 2;
+
+    //    if (Input.GetKey(KeyCode.Q))
+    //        velocity.y -= (moveSpeed * Time.deltaTime) * 2;
+
+
+    //    controller.Move(velocity * Time.deltaTime);
 
 
         
 
-        //Make sure moving up and down doesn't happen forever
-        if((velocity.y > 0 || velocity.y < 0) && !(Input.GetKey(KeyCode.E) || Input.GetKey(KeyCode.Q)))
-        {
-            velocity.y = 0;
-        }    
+    //    //Make sure moving up and down doesn't happen forever
+    //    if((velocity.y > 0 || velocity.y < 0) && !(Input.GetKey(KeyCode.E) || Input.GetKey(KeyCode.Q)))
+    //    {
+    //        velocity.y = 0;
+    //    }    
  
-    }
+    //}
 
 
     private IEnumerator Dash(float curMoveSpeed)

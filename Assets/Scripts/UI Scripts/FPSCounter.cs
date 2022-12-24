@@ -9,11 +9,14 @@ public class FPSCounter : MonoBehaviour
 
     public TextMeshProUGUI fpsText;
     public Toggle FPSCounterToggle;
+    private PauseScript pauseScript;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        pauseScript = FindObjectOfType<PauseScript>();
+
         if (FPSCounterToggle.isOn)
         {
             this.gameObject.SetActive(true);
@@ -46,8 +49,12 @@ public class FPSCounter : MonoBehaviour
         while (FPSCounterToggle.isOn)
         {
             yield return null;
-            float FPSfloat = (int)(1f / Time.smoothDeltaTime);
-            fpsText.text = FPSfloat.ToString();
+
+            if (!pauseScript.isPaused)
+            {
+                float FPSfloat = (int)(1f / Time.smoothDeltaTime);
+                fpsText.text = FPSfloat.ToString();
+            }
         }
     }
 }

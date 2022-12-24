@@ -13,18 +13,21 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float slowDownLength = 2f;
     [SerializeField] private float slowDownTimer = 2f;
     public MovieLightController movieBossLights;
+    [SerializeField] MovieBossController movieBossControl;
 
 
     [Header("Player Settings")]
     public float mouseXSens;
     public float mouseYSens;
 
-    //public PauseScript pauseScript;
+
+
+    public PauseScript pauseScript;
 
     // Start is called before the first frame update
     void Start()
     {
-        //pauseScript = GameObject.FindObjectOfType<PauseScript>();
+        pauseScript = GameObject.FindObjectOfType<PauseScript>();
 
         //Makes sure the GameManager is kept between scenes. If there isn't one, then create it
         DontDestroyOnLoad(gameObject);
@@ -60,7 +63,18 @@ public class GameManager : MonoBehaviour
 
         if (ghosts.Length == 1)
         {
-            movieBossLights.BackToDefault(3);
+            if (movieBossLights != null && movieBossControl != null)
+            {
+                movieBossLights.DefaultAttackColor(10);
+                movieBossControl.PlaySound(movieBossControl.awakenSound);
+            }
+            else
+            {
+                movieBossLights = FindObjectOfType<MovieLightController>();
+                movieBossControl = FindObjectOfType<MovieBossController>();
+
+                RecountEnemies();
+            }
         }
 
     }
@@ -104,6 +118,7 @@ public class GameManager : MonoBehaviour
                     Debug.Log("Back to normal time");
                     slowDownActive = false;
                     slowDownTimer = 0;
+                    RecountEnemies();
                 }
             }
         }

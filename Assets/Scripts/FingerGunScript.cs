@@ -41,8 +41,17 @@ public class FingerGunScript : MonoBehaviour
     [SerializeField] private ParticleSystem muzzleFlash;
     [SerializeField] private LayerMask shootableLayers;
     [SerializeField] private GameObject bulletHole;
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] AudioClip shootingSound;
+    [SerializeField] AudioClip headshotSound;
+    [SerializeField] PauseScript pauseScript;
 
 
+    private void Start()
+    {
+        pauseScript = FindObjectOfType<PauseScript>();
+        audioSource = GetComponentInParent<AudioSource>();
+    }
 
 
     void Update()
@@ -53,6 +62,7 @@ public class FingerGunScript : MonoBehaviour
 
             for (int i = 0; i < (bulletsPerTriggerPull); i++)
             {
+                if(!pauseScript.isPaused)
                 Shoot();
 
             }
@@ -70,6 +80,8 @@ public class FingerGunScript : MonoBehaviour
         RaycastHit hit;
 
 
+
+
         if (Physics.Raycast(fpsCam.transform.position, directionRay, out hit, range, shootableLayers))
         {
             HealthSystem target = hit.transform.GetComponentInParent<HealthSystem>();
@@ -82,19 +94,41 @@ public class FingerGunScript : MonoBehaviour
                 if (hit.collider.name == "Limbs")
                 {
                     target.TakeDamage(damage * limbMultiplier);
+                    audioSource.clip = shootingSound;
                 }
                 else if (hit.collider.name == "Head")
                 {
                     target.TakeDamage(damage * headshotMultiplier);
+                    audioSource.clip = headshotSound;
                 }
                 else
+                {
                     target.TakeDamage(damage);
+                    audioSource.clip = shootingSound;
+                }
 
                 Debug.Log("We hit something");
+                if(audioSource.clip == null)
+                {
+                    audioSource.clip = shootingSound;
+                }
+
+                audioSource.Play();
             }
 
+
             //Particles are initiated if we hit something
+
+            if(target == null)
+            {
+                PlaySound(shootingSound);
+            }
+            
             Instantiate(bulletHole, hit.point, Quaternion.LookRotation(hit.normal));
+        }
+        else
+        {
+            PlaySound(shootingSound);
         }
 
 
@@ -175,5 +209,12 @@ public class FingerGunScript : MonoBehaviour
         anim.SetBool("Firing", false);
     }
 
+
+
+    public void PlaySound(AudioClip newClip)
+    {
+        audioSource.clip = newClip;
+        audioSource.Play();
+    }
 
 }

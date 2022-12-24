@@ -34,7 +34,7 @@ public class MovieBossController : MonoBehaviour
     [Header("Movement and gravity")]
     [SerializeField] private NavMeshAgent navController;
 
-    [Header("Health Phases")]
+    [Header("Health Phases - List should go from highest to lower")]
     [SerializeField] List<float> healthPhasesList = new List<float> { 75, 50, 25 };
     [SerializeField] int currentHealthPhase;
     [SerializeField] float popcornAttackTimer;
@@ -43,6 +43,12 @@ public class MovieBossController : MonoBehaviour
 
     [Header("Lights Controller")]
     [SerializeField] MovieLightController lightController;
+
+    [Header("Audio stuff")]
+    [SerializeField] AudioSource audioSource;
+    public AudioClip attackSound;
+    public AudioClip awakenSound;
+
 
 
 
@@ -56,6 +62,8 @@ public class MovieBossController : MonoBehaviour
         gameManager = GameManager.FindObjectOfType<GameManager>();
         navController = NavMeshAgent.FindObjectOfType<NavMeshAgent>();
         navController.speed = 0;
+
+        //Start Routines on level 1 start
         StartCoroutine(FOVRoutine());
         StartCoroutine(Idle());
 
@@ -115,8 +123,11 @@ public class MovieBossController : MonoBehaviour
                     {
                         canSeePlayer = true;
 
-                        if(!currentlyAttacking)
-                        StartRunning();
+                        if (!currentlyAttacking && navController.speed == 0)
+                        {
+                            StartRunning();
+                            audioSource.Play();
+                        }
                     }
                     else
                         canSeePlayer = false;
@@ -140,12 +151,17 @@ public class MovieBossController : MonoBehaviour
 
     private IEnumerator Attack()
     {
+        //During attack
         StopRunning();
         lightController.DefaultAttackColor();
         currentlyAttacking = true;
         anim.SetBool("Attacking", true);
+        PlaySound(attackSound);
         StartCoroutine(basicAttack.NormalAttack());
         yield return new WaitForSeconds(groundSlamTime);
+
+
+        //After attack
         anim.SetBool("Attacking", false);
         currentlyAttacking = false;
         StartRunning();
@@ -159,6 +175,7 @@ public class MovieBossController : MonoBehaviour
         {
             ChangePhases();
         }
+
     }
 
 
@@ -166,8 +183,12 @@ public class MovieBossController : MonoBehaviour
     public void ChangePhases()
     {
         currentlyAttacking = true;
-        currentHealthPhase += 1;
-        Debug.Log("We're now in phase: " + currentHealthPhase);
+
+        if (currentHealthPhase <= healthPhasesList.Count -1)
+        {
+            currentHealthPhase += 1;
+            Debug.Log("We're now in phase: " + currentHealthPhase);
+        }
 
         if(currentHealthPhase == 1) //Popcorn attack
         {
@@ -188,6 +209,7 @@ public class MovieBossController : MonoBehaviour
             StartCoroutine(deathBallScript.DeathBallStart());
             StartCoroutine(LosingSteam());
         }
+
     }
 
 
@@ -196,6 +218,7 @@ public class MovieBossController : MonoBehaviour
     {
         StopRunning();
         lightController.DefaultAttackColor(3);
+        PlaySound(attackSound);
         anim.SetBool(currentPhase, true);
         
         
@@ -208,6 +231,12 @@ public class MovieBossController : MonoBehaviour
     }
 
 
+
+    public void PlaySound(AudioClip newClip)
+    {
+        audioSource.clip = newClip;
+        audioSource.Play();
+    }
 
 
 
@@ -234,7 +263,7 @@ public class MovieBossController : MonoBehaviour
 
             if (canSeePlayer)
             {
-                Attack();
+                PlaySound(attackSound);
                 break;
             }
         }
