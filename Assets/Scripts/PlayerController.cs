@@ -31,9 +31,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Health")]
     [SerializeField] private float maxHealth;
-    [SerializeField] private bool canRegainHealth;
-    [SerializeField] private float healthRegenTimer;
-    [SerializeField] private float healthRegenSpeed = 15;
+    [SerializeField] PlayerDamagedScript playerDamage;
 
 
     [Header("Game Objects")]
@@ -65,11 +63,11 @@ public class PlayerController : MonoBehaviour
             isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
 
-            //Dash
-            if ((Input.GetKeyDown(KeyCode.LeftShift) && !dashing))
-            {
-                StartCoroutine(Dash(moveSpeed));
-            }
+            ////Dash
+            //if ((Input.GetKeyDown(KeyCode.LeftShift) && !dashing))
+            //{
+            //    StartCoroutine(Dash(moveSpeed));
+            //}
         }
 
     }
@@ -88,7 +86,7 @@ public class PlayerController : MonoBehaviour
         //Apply gravity, and only until a top speed set by currentGravity
         velocity.y += currentGravity;
 
-        if(velocity.y < currentGravity)
+        if (velocity.y < currentGravity)
         {
             velocity.y = currentGravity;
         }
@@ -103,7 +101,7 @@ public class PlayerController : MonoBehaviour
 
     public void JumpEvent(InputAction.CallbackContext context)
     {
-        
+
 
         if (isGrounded && context.performed)
         {
@@ -117,7 +115,7 @@ public class PlayerController : MonoBehaviour
     {
         float timer = 0;
         moveSpeed *= 2f;
-        
+
 
         while (timer <= jumpMaxTimer)
         {
@@ -145,56 +143,23 @@ public class PlayerController : MonoBehaviour
     {
         health -= damageTaken;
 
+
+
         if (health <= 0)
         {
             Die();
         }
-
+        else
+        {
+            playerDamage.PlayerDamageVisualUpdate(health);
+        }
     }
 
-    
-    IEnumerator WaitForHealthRegen(float waitBeforeHealthRegens)
-    {
-        yield return new WaitForSeconds(waitBeforeHealthRegens);
-        canRegainHealth = true;
-    }
 
     void Die()
     {
         pauseScript.GameOver();
     }
-
-
-
-
-    //private void GodModeMovement()
-    //{
-    //    float x = Input.GetAxis("Horizontal");
-    //    float z = Input.GetAxis("Vertical");
-
-
-    //    Vector3 move = transform.right * x + transform.forward * z;
-    //    controller.Move(move * moveSpeed * Time.deltaTime);
-
-    //    if (Input.GetKey(KeyCode.E))
-    //        velocity.y += (moveSpeed * Time.deltaTime) * 2;
-
-    //    if (Input.GetKey(KeyCode.Q))
-    //        velocity.y -= (moveSpeed * Time.deltaTime) * 2;
-
-
-    //    controller.Move(velocity * Time.deltaTime);
-
-
-        
-
-    //    //Make sure moving up and down doesn't happen forever
-    //    if((velocity.y > 0 || velocity.y < 0) && !(Input.GetKey(KeyCode.E) || Input.GetKey(KeyCode.Q)))
-    //    {
-    //        velocity.y = 0;
-    //    }    
- 
-    //}
 
 
     private IEnumerator Dash(float curMoveSpeed)

@@ -9,19 +9,6 @@ public class MenuNavigation : MonoBehaviour
 
 
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-
 
     public void ChangeCurrentMenu(GameObject newActiveMenu)
     {
@@ -44,11 +31,11 @@ public class MenuNavigation : MonoBehaviour
     }
     public void EnableAudioMenu()
     {
-        ChangeCurrentMenu(availableMenus[3]);
+        ChangeCurrentMenu(availableMenus[2]);
     }
     public void EnableExitPrompt()
     {
-        ChangeCurrentMenu(availableMenus[4]);
+        ChangeCurrentMenu(availableMenus[3]);
     }
 
 

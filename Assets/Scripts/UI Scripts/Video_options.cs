@@ -11,8 +11,8 @@ public class Video_options : MonoBehaviour
     [SerializeField] int currentRes;
     [SerializeField] int previousRes;
     private Resolution[] defaultUnityResolutions;
-    public Resolution[] shortResList;
     private List<int> shortResolutionList = new List<int>();
+    private List<string> optionsList = new List<string>();
     [SerializeField] TMP_Dropdown resolutionDropdown;
 
 
@@ -30,7 +30,8 @@ public class Video_options : MonoBehaviour
     [SerializeField] int fullscreenMode;
     [SerializeField] TMP_Dropdown fullscreenDropdown;
 
-
+    [Header("Game Manager")]
+    GameManager gameManager;
 
 
 
@@ -38,21 +39,62 @@ public class Video_options : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (gameManager == null)
+        {
+            gameManager = FindObjectOfType<GameManager>();
+        }
+
+
+
+
+        //Set fullscreen dropdown to value at startup
+        if(Screen.fullScreenMode == FullScreenMode.ExclusiveFullScreen)
+        {
+            fullscreenDropdown.value = 0;
+        }
+        else if (Screen.fullScreenMode == FullScreenMode.FullScreenWindow)
+        {
+            fullscreenDropdown.value = 1;
+        }
+        else if (Screen.fullScreenMode == FullScreenMode.Windowed)
+        {
+            fullscreenDropdown.value = 2;
+        }
+
+
+        
+    }
+
+
+    //When enabled, check the current resolution and set the drop down to that
+    public void OnEnable()
+    {
+
+
+        //Set framerate to the current selected at startup
+        //framerateInputField.text = framerateTarget.ToString();
+        framerateInputField.text = Application.targetFrameRate.ToString();
+        FramerateChange();
+
+        //Set vSync to the current selected at startup
+        vSyncDropdown.value = QualitySettings.vSyncCount;
+        vSyncChange();
+
+
+
+
+        //Run through every resolution and only add unique entries
         defaultUnityResolutions = Screen.resolutions;
-        framerateTarget = Screen.currentResolution.refreshRate;
-        framerateInputField.text = framerateTarget.ToString();
 
-
-
-        //Gather resolution dropdown menu options
-        List<string> optionsList = new List<string>();
         int currentResolutionIndex = 0;
         string option;
 
-        //Run through every resolution and only add unique entries
+
         for (int i = 0; i < defaultUnityResolutions.Length; i++)
         {
+
             option = defaultUnityResolutions[i].width + " x " + defaultUnityResolutions[i].height;
+
 
             if (!optionsList.Contains(option))
             {
@@ -60,22 +102,28 @@ public class Video_options : MonoBehaviour
                 shortResolutionList.Add(i);
             }
 
-
-            //Checks current resolution and sets the dropdown to the same
-            if (defaultUnityResolutions[i].width == Screen.width && defaultUnityResolutions[i].height == Screen.height && optionsList.Contains(defaultUnityResolutions[i].width + " x " + defaultUnityResolutions[i].height))
+            if (defaultUnityResolutions[i].width == Screen.width && defaultUnityResolutions[i].height == Screen.height)
             {
-                currentResolutionIndex = i;
-                //previousRes = currentResolutionIndex;
-                //Debug.Log("Resolution at startup is: " + defaultUnityResolutions[shortResolutionList[i]]);
+                currentResolutionIndex = shortResolutionList.Count - 1;
+                Debug.Log("This is the current resolution: " + currentResolutionIndex + " ," + defaultUnityResolutions[shortResolutionList[currentResolutionIndex]]);
             }
         }
 
 
+        resolutionDropdown.options.Clear();
         resolutionDropdown.AddOptions(optionsList);
-        resolutionDropdown.value = currentResolutionIndex;
         resolutionDropdown.RefreshShownValue();
+        resolutionDropdown.SetValueWithoutNotify(currentResolutionIndex);
 
 
+        //resolutionDropdown.value = currentResolutionIndex;
+        //resolutionDropdown.RefreshShownValue();
+
+
+
+
+
+        Start();
     }
 
 
@@ -90,6 +138,7 @@ public class Video_options : MonoBehaviour
         //newRes.text = "NEW:    " + resolution.width + " x " + resolution.height;
         //Timer.maxValue = waitForUserConfirmTime;
         //Timer.value = Timer.maxValue;
+        Debug.Log("Resolution being set is: " + defaultUnityResolutions[shortResolutionList[resolutionDropdown.value]] + " Unity's internal resolution is: " + Screen.currentResolution + " width is: " + Screen.width + " and height is: " + Screen.height);
 
     }
 
@@ -98,13 +147,22 @@ public class Video_options : MonoBehaviour
     public void vSyncChange()
     {
         Debug.Log("Changed vSync value to: " + vSyncDropdown.value);
+
+        //framerateTarget = int.Parse(framerateInputField.text);
+
         QualitySettings.vSyncCount = vSyncDropdown.value;
+        
+
+
 
 
         //Toggle based on current settings
         if (QualitySettings.vSyncCount == 1 || QualitySettings.vSyncCount == 2)
         {
+            //framerateTarget = int.Parse(framerateInputField.text);
+            framerateInputField.text = framerateTarget.ToString();
             framerateInputField.interactable = false;
+            
 
 
             //Show the current framerate when vsync is enabled
@@ -131,13 +189,20 @@ public class Video_options : MonoBehaviour
     public void FramerateChange()
     {
         Debug.Log("Changed framerate to: " + framerateInputField.text);
-        framerateTarget = int.Parse(framerateInputField.text);
+
+        if (framerateInputField.interactable)
+        {
+            framerateTarget = int.Parse(framerateInputField.text);
+        }
+
         Application.targetFrameRate = int.Parse(framerateInputField.text);
     }
 
 
     public void FulllscreenChange()
     {
+
+        Debug.Log("Changed fullscreen mode: " + Screen.fullScreenMode);
 
         fullscreenMode = fullscreenDropdown.value; //0 = Fullscreen, 1 = Borderless, 2 = Windowed
 

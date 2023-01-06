@@ -5,11 +5,11 @@ using UnityEngine;
 public class PauseScript : MonoBehaviour
 {
 
-    [SerializeField] GameObject pauseMenu;
+    public GameObject pauseMenu;
     private GameManager gameManager;
     public bool isPaused = false;
     public float timeScaleSynth = 0;
-    //public GameObject gameOverPrompt;
+    public GameObject gameOverPrompt;
 
 
 
@@ -18,14 +18,34 @@ public class PauseScript : MonoBehaviour
     {
         gameManager = GameManager.FindObjectOfType<GameManager>();
 
+        if (pauseMenu == null)
+        {
+            pauseMenu = GameObject.Find("/GameUI/PauseMenu");
+
+            if(pauseMenu != null)
+            pauseMenu.SetActive(false);
+        }
+        else
+        {
+            pauseMenu.SetActive(false);
+        }
+
+        GameManager.pauseScript = this;
+
+        ResumeGame();
     }
+
 
     // Update is called once per frame
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            if(isPaused)
+            if(pauseMenu == null)
+                pauseMenu = GameObject.Find("/GameUI/PauseMenu");
+
+
+            if (isPaused)
             {
                 ResumeGame();
             }
@@ -38,11 +58,13 @@ public class PauseScript : MonoBehaviour
 
     public void PauseGame()
     {
-        pauseMenu.SetActive(true);
-        Cursor.lockState = CursorLockMode.None;
-        Time.timeScale = 0;
-        isPaused = true;
-        
+        if (pauseMenu != null)
+        {
+            pauseMenu.SetActive(true);
+            Cursor.lockState = CursorLockMode.None;
+            Time.timeScale = 0;
+            isPaused = true;
+        }
     }
 
     public void ResumeGame()
@@ -57,7 +79,10 @@ public class PauseScript : MonoBehaviour
 
     public void GameOver()
     {
-        PauseGame();
+        gameOverPrompt.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        Time.timeScale = 0;
+        isPaused = true;
         Debug.Log("OH NO THE GAME'S DONE!!");
     }
 }

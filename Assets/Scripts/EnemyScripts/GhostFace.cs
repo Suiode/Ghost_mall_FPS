@@ -6,6 +6,7 @@ public class GhostFace : MonoBehaviour
 {
 
     //Variables for fieldOfView
+    [Header("Field of view")]
     [SerializeField] private float viewRadius = 60;
     [SerializeField] private float viewAngle = 45f;
     private bool canSeePlayer = false;
@@ -14,16 +15,16 @@ public class GhostFace : MonoBehaviour
 
 
 
-    public GameObject player;
-    public GameManager gameManager;
-    public ParticleSystem fireParticles;
+    [Header("Attack Variables")]
     public float enemySpeed = 10f;
     public float attackDistance = 5f;
     public Animator anim;
-    private bool currentlyAttacking = false;
+    [SerializeField] bool currentlyAttacking = false;
+    [SerializeField] float damage = 25f;
 
 
     //slowed down time variables
+    [Header("Variables for the slow down to work")]
     [SerializeField] private bool timeSlowActive = false;
     [SerializeField] private float normalMoveSpeed;
     [SerializeField] private float normalAnimSpeed;
@@ -38,7 +39,10 @@ public class GhostFace : MonoBehaviour
     public Color defaultFireColor;
 
 
-
+    [SerializeField] GameObject player;
+    [SerializeField] GameManager gameManager;
+    [SerializeField] ParticleSystem fireParticles;
+    [SerializeField] AudioSource audioSource;
 
 
     // Start is called before the first frame update
@@ -47,18 +51,25 @@ public class GhostFace : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         gameManager = GameManager.FindObjectOfType<GameManager>();
         StartCoroutine(FOVRoutine());
-
+        StartCoroutine(IdlePhase());
 
         normalMoveSpeed = enemySpeed;
         normalAnimSpeed = anim.speed;
+
+        BackToNormalTime();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (canSeePlayer && !currentlyAttacking)
+        if (canSeePlayer && !currentlyAttacking )
         {
-            MoveTowardsPoint(player.transform.position);
+            if (!GameManager.pauseScript.isPaused)
+            {
+                MoveTowardsPoint(player.transform.position);
+            }
+
+
             transform.LookAt(player.transform);
  
             if (Vector3.Distance(transform.position, player.transform.position) < attackDistance)
@@ -156,7 +167,34 @@ public class GhostFace : MonoBehaviour
         
     }
 
+    public IEnumerator IdlePhase()
+    {
+        while(!canSeePlayer)
+        {
+            anim.SetBool("Idle", true);
+            yield return null;
+
+            if(canSeePlayer)
+            {
+                anim.SetBool("Idle", false);
+                break;
+            }
+        }
+        
+    }
 
 
+    public void OnCollisionEnter(Collision collision)
+    {
+
+        //audioSource.Play();
+
+        HealthSystem targetHealth = collision.transform.GetComponentInParent<HealthSystem>();
+
+        if (targetHealth != null && currentlyAttacking)
+        {
+            targetHealth.TakeDamage(damage);
+        }
+    }
 
 }

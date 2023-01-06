@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,21 +14,39 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float slowDownLength = 2f;
     [SerializeField] private float slowDownTimer = 2f;
     public MovieLightController movieBossLights;
-    [SerializeField] MovieBossController movieBossControl;
+    public MovieBossController movieBossControl;
+    public static MoonScript moonController;
+    public GhostFace[] ghosts;
 
 
     [Header("Player Settings")]
-    public float mouseXSens;
-    public float mouseYSens;
+    public static float mouseXSens = 100;
+    public static float mouseYSens = 100;
 
 
+    public static PauseScript pauseScript;
+    public GameObject pauseMenu;
 
-    public PauseScript pauseScript;
+
+    [Header("Screen settings")]
+    public Video_options videoOptions;
+    public int currentResolution;
+    public static bool FPSCounterEnabled;
+    public static int framerateTarget;
+
+
 
     // Start is called before the first frame update
     void Start()
     {
         pauseScript = GameObject.FindObjectOfType<PauseScript>();
+        moonController = FindObjectOfType<MoonScript>();
+
+        if (movieBossControl == null)
+        {
+            movieBossLights = FindObjectOfType<MovieLightController>();
+            movieBossControl = FindObjectOfType<MovieBossController>();
+        }
 
         //Makes sure the GameManager is kept between scenes. If there isn't one, then create it
         DontDestroyOnLoad(gameObject);
@@ -38,9 +57,8 @@ public class GameManager : MonoBehaviour
         {
             instance = this;
         }
-
     }
-    
+
     public void StartSlowDown()
     {
         if (!slowDownActive)
@@ -50,77 +68,79 @@ public class GameManager : MonoBehaviour
         else
         {
             slowDownTimer = slowDownLength;
-            RecountEnemies();
         }
-
-
 
     }
 
-    public void RecountEnemies()
+    public void EnableBoss()
     {
-        GhostFace[] ghosts = FindObjectsOfType<GhostFace>();
-
-        if (ghosts.Length == 1)
-        {
             if (movieBossLights != null && movieBossControl != null)
             {
-                movieBossLights.DefaultAttackColor(10);
+                moonController.ShiftColorBloodDefault(2f);
+                movieBossLights.BackToDefault();
                 movieBossControl.PlaySound(movieBossControl.awakenSound);
+                movieBossControl.isIdle = false;
             }
             else
             {
                 movieBossLights = FindObjectOfType<MovieLightController>();
                 movieBossControl = FindObjectOfType<MovieBossController>();
 
-                RecountEnemies();
+                if (movieBossLights != null && movieBossControl != null)
+                {
+                    EnableBoss();
+                }
             }
-        }
 
     }
 
     public IEnumerator SlowDownEnemies()
     {
-        Debug.Log("We have started the slow down script");
-
         slowDownTimer = slowDownLength;
         slowDownActive = true;
 
-        GhostFace[] ghosts = FindObjectsOfType<GhostFace>();
 
-        if (ghosts.Length == 1)
-        {
-            movieBossLights.BackToDefault(3);
-        }
+        ghosts = FindObjectsOfType<GhostFace>();
+
+
+
 
         //Tell enemies to slow down
         foreach (GhostFace ghostie in ghosts)
         {
             ghostie.SlowDownTime();
-            Debug.Log("Slowing down for ghosties");
-
         }
+
 
         while (slowDownActive)
         {
-            //Debug.Log("Made it to the counter");
             yield return null;
             slowDownTimer -= Time.deltaTime;
 
+            ghosts = FindObjectsOfType<GhostFace>();
 
-            //Debug.Log("WaitForSeconds completed successfully");
+            if (ghosts.Length == 0 && movieBossControl.isIdle)
+            {
+                EnableBoss();
+            }
+
+
             if (slowDownTimer <= 0)
             {
                 for (int i = 0; i < ghosts.Length; i++)
                 {
                     GhostFace enemyScript = ghosts[i].GetComponent<GhostFace>();
+
+                    if (ghosts == null)
+                        Debug.Log("Number of ghosts left: " + 0);
+
                     enemyScript.BackToNormalTime();
-                    Debug.Log("Back to normal time");
                     slowDownActive = false;
                     slowDownTimer = 0;
-                    RecountEnemies();
                 }
             }
+
+
         }
     }
 }

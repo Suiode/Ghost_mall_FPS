@@ -14,6 +14,7 @@ public class HealthSystem : MonoBehaviour
     [SerializeField] GameManager gameManager;
     [SerializeField] Rigidbody rb;
     [SerializeField] float timeToDissappear;
+    public PlayerController playerController;
 
 
 
@@ -26,6 +27,11 @@ public class HealthSystem : MonoBehaviour
         }
 
         rb = GetComponent<Rigidbody>();
+
+        playerController = this.gameObject.GetComponent<PlayerController>();
+
+
+
     }
 
 
@@ -33,7 +39,11 @@ public class HealthSystem : MonoBehaviour
     {
         health -= damageTaken;
 
-        //Debug.Log("This object: " + transform.name + " took this much damage: " + damageTaken);
+
+        if (playerController != null)
+        {
+            playerController.TakeDamage(damageTaken);
+        }
 
         if (health <= 0)
         {
@@ -56,6 +66,7 @@ public class HealthSystem : MonoBehaviour
             rb.useGravity = true;
         }
 
+       if(playerController == null)
         Destroy(this.gameObject, timeToDissappear);
     }
 }

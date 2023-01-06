@@ -16,6 +16,7 @@ public class MovieBossController : MonoBehaviour
 
 
     [Header("Attacking and health")]
+    public bool isIdle;
     public float enemySpeed = 10f;
     [SerializeField] float defaultMoveSpeed = 10f;
     [SerializeField] float attackDistance = 5f;
@@ -68,6 +69,7 @@ public class MovieBossController : MonoBehaviour
         StartCoroutine(Idle());
 
         gameManager.movieBossLights = lightController;
+        gameManager.movieBossControl = this;
 
     }
 
@@ -255,7 +257,7 @@ public class MovieBossController : MonoBehaviour
     public IEnumerator Idle()
     {
         lightController.ChangeColor(Color.black);
-
+        isIdle = true;
 
         while(!canSeePlayer)
         {
@@ -263,7 +265,12 @@ public class MovieBossController : MonoBehaviour
 
             if (canSeePlayer)
             {
+                isIdle = false;
                 PlaySound(attackSound);
+                lightController.DefaultAttackColor(0.5f);
+                StartRunning();
+                new WaitForSeconds(1f);
+                lightController.BackToDefault(1);
                 break;
             }
         }
@@ -273,6 +280,7 @@ public class MovieBossController : MonoBehaviour
     public IEnumerator LosingSteam()
     {
         yield return new WaitForSeconds(1f);
+        lightController.BackToDefault();
         healthSystem.TakeDamage(2000);
     }
 }

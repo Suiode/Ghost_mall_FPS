@@ -40,21 +40,20 @@ public class MouseLook : MonoBehaviour
 
         gameManager = FindObjectOfType<GameManager>();
 
-        yMouseSens = gameManager.mouseYSens;
-        xMouseSens = gameManager.mouseXSens;
+        yMouseSens = GameManager.mouseYSens;
+        xMouseSens = GameManager.mouseXSens;
 
         sensXInput.text = xMouseSens.ToString();
         sensYInput.text = yMouseSens.ToString();
         UpdateValueFromInputX();
         UpdateValueFromInputY();
-        Debug.Log("Did this reload on the scene change?");
     }
 
     // Update is called once per frame
     void Update()
     {
-        float mouseX = Input.GetAxis("Mouse X") * (xMouseSens) / 10 * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * (yMouseSens) / 10 * Time.deltaTime;
+        float mouseX = (Input.GetAxis("Mouse X") * (xMouseSens)) * Time.deltaTime;
+        float mouseY = (Input.GetAxis("Mouse Y") * ((yMouseSens) *1.5f)) * Time.deltaTime;
 
 
         xRotation -= mouseY;
@@ -78,7 +77,7 @@ public class MouseLook : MonoBehaviour
         float newSens = Mathf.Round(sensXSlider.value * 10) / 10;
         sensXSlider.value = newSens;
         sensXInput.text = newSens.ToString();
-        gameManager.mouseXSens = newSens;
+        GameManager.mouseXSens = newSens;
         xMouseSens = newSens;
 
         if (linkedXY)
@@ -98,7 +97,7 @@ public class MouseLook : MonoBehaviour
         {
             sensXSlider.value = newSensFloat;
             sensXInput.text = newSensFloat.ToString();
-            gameManager.mouseXSens = newSensFloat;
+            GameManager.mouseXSens = newSensFloat;
             xMouseSens = newSensFloat;
 
             if (linkedXY)
@@ -108,9 +107,6 @@ public class MouseLook : MonoBehaviour
                 yMouseSens = newSensFloat;
             }
         }
-
-        
-
     }
 
 
@@ -119,7 +115,7 @@ public class MouseLook : MonoBehaviour
         float newSens = Mathf.Round(sensYSlider.value * 10) / 10;
         sensYSlider.value = newSens;
         sensYInput.text = newSens.ToString();
-        gameManager.mouseYSens = newSens;
+        GameManager.mouseYSens = newSens;
         yMouseSens = newSens;
 
         if (linkedXY)
@@ -139,7 +135,7 @@ public class MouseLook : MonoBehaviour
         {
             sensYSlider.value = newSensFloat;
             sensYInput.text = newSensFloat.ToString();
-            gameManager.mouseYSens = newSensFloat;
+            GameManager.mouseYSens = newSensFloat;
             yMouseSens = newSensFloat;
 
 
@@ -174,8 +170,8 @@ public class MouseLook : MonoBehaviour
 
         gameManager = FindObjectOfType<GameManager>();
 
-        yMouseSens = gameManager.mouseYSens;
-        xMouseSens = gameManager.mouseXSens;
+        yMouseSens = GameManager.mouseYSens;
+        xMouseSens = GameManager.mouseXSens;
 
         sensXInput.text = xMouseSens.ToString();
         sensYInput.text = yMouseSens.ToString();

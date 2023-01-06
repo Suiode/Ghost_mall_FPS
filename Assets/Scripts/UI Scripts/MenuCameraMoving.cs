@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuCameraMoving : MonoBehaviour
 {
@@ -7,17 +8,23 @@ public class MenuCameraMoving : MonoBehaviour
     public Transform[] newCamPosList;
     public float defaultChangeTime = 1f;
     [SerializeField] private bool cameraMoving = false;
+    public bool enableBackButton = false;
+    public GameObject backButton;
     private float changeTime;
-    
+
 
     public void MoveCameraToNewPos()
     {
-        if(newCamPosList.Length != 0)
+        camera = FindObjectOfType<Camera>();
+
+        if (newCamPosList.Length != 0)
         StartCoroutine(MovingTheCam());
     }
 
     private IEnumerator MovingTheCam()
     {
+        
+
         for (int i =0; i < newCamPosList.Length; i++)
         {
             Transform oldCamTransform = camera.transform;
@@ -59,9 +66,25 @@ public class MenuCameraMoving : MonoBehaviour
                 {
                     cameraMoving = false;
                     changeTime = 0;
-                    //Debug.Log("We're at: " + (i+1) + " out of: " + (newCamPosList.Length) + " and the camera rotation is: " + newCamRot);
+                    Debug.Log("We're at: " + (i+1) + " out of: " + (newCamPosList.Length) + " and the camera rotation is: " + newCamRot);
                 }
             }
+
+
+
+            if (backButton != null)
+            {
+                if (i == (newCamPosList.Length -1) && enableBackButton)
+                {
+                    backButton.SetActive(true);
+
+                }
+                else
+                {
+                    backButton.SetActive(false);
+                }
+            }
+
         }
 
     }

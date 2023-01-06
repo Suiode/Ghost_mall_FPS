@@ -14,6 +14,9 @@ public class MoonScript : MonoBehaviour
     [SerializeField] private float defaultChangeTime = 0.2f;
     [SerializeField] private float changeTime = 0;
     [SerializeField] private bool shiftingPhase = false;
+    [SerializeField] Color oldColor;
+    public Color bloodMoonColor = Color.red;
+    public Color defaultColor;
 
 
     void Start()
@@ -21,38 +24,40 @@ public class MoonScript : MonoBehaviour
         //Change blood moon status based on startup color
         if (moonlight.color == Color.red)
         {
-            StartCoroutine(MoonShift(moonlight.color, Color.red));
+            StartCoroutine(MoonShift(Color.red));
             bloodMoonEnabled = true;
         }
         else
         {
             bloodMoonEnabled = false;
-            StartCoroutine(MoonShift(moonlight.color, Color.gray));
+            StartCoroutine(MoonShift(Color.gray));
         }
 
+        GameManager.moonController = this;
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        //Current setup to change color whenever I like. In the future this will all be handled by the MoonShift() coroutine
-        if(Input.GetKeyDown(KeyCode.F) && !bloodMoonEnabled)
-        {
-            //shiftingPhase = true;
-            StartCoroutine(MoonShift(moonlight.color, Color.red));
-            bloodMoonEnabled = true;
-        }
-        else if(Input.GetKeyDown(KeyCode.F) && bloodMoonEnabled)
-        {
-            //shiftingPhase = true;
-            StartCoroutine(MoonShift(moonlight.color, Color.gray));
-            bloodMoonEnabled = false;
-        }
-    }
+    //void Update()
+    //{
+    //    //Current setup to change color whenever I like. In the future this will all be handled by the MoonShift() coroutine
+    //    //if(Input.GetKeyDown(KeyCode.F) && !bloodMoonEnabled)
+    //    //{
+    //    //    oldColor = moonlight.color;
+    //    //    StartCoroutine(MoonShift(Color.red));
+    //    //    bloodMoonEnabled = true;
+    //    //}
+    //    //else if(Input.GetKeyDown(KeyCode.F) && bloodMoonEnabled)
+    //    //{
+    //    //    oldColor = moonlight.color;
+    //    //    StartCoroutine(MoonShift(Color.gray));
+    //    //    bloodMoonEnabled = false;
+    //    //}
+    //}
 
 
-    public IEnumerator MoonShift(Color oldColor, Color newColor)
+    public IEnumerator MoonShift(Color newColor, float shiftTimer = 0.2f)
     {
+
         shiftingPhase = true;
         changeTime = 0;
 
@@ -61,11 +66,11 @@ public class MoonScript : MonoBehaviour
         {
             yield return null;
             changeTime += Time.deltaTime;
-            moonlight.color = Color.Lerp(oldColor, newColor, (changeTime / defaultChangeTime));
-            camera.backgroundColor = Color.Lerp(oldColor, newColor, (changeTime / defaultChangeTime));
+            moonlight.color = Color.Lerp(oldColor, newColor, (changeTime / shiftTimer));
+            camera.backgroundColor = Color.Lerp(oldColor, newColor, (changeTime / shiftTimer));
             
 
-            if (changeTime >= defaultChangeTime)
+            if (changeTime >= shiftTimer)
             {
                 shiftingPhase = false;
                 changeTime = 0;
@@ -75,6 +80,19 @@ public class MoonScript : MonoBehaviour
     }
 
 
+    public void ShiftColorBloodDefault(float shiftTimer = 0.2f)
+    {
+        oldColor = moonlight.color;
+        StartCoroutine(MoonShift(Color.red, shiftTimer));
+        bloodMoonEnabled = true;
+    }
+
+    public void ShiftBackToDefault(float shiftTimer = 0.2f)
+    {
+        oldColor = moonlight.color;
+        StartCoroutine(MoonShift(Color.gray, shiftTimer));
+        bloodMoonEnabled = false;
+    }
 }
 
 

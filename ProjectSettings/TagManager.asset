@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Ground
   - Enemy
+  - PauseMenu
+  - BackButton
   layers:
   - Default
   - TransparentFX

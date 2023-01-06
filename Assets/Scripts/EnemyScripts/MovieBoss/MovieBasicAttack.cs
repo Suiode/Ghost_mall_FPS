@@ -12,7 +12,6 @@ public class MovieBasicAttack : MonoBehaviour
 
 
     [Header("Aditional options")]
-    [SerializeField] bool canHurtSelf = false;
     [SerializeField] List<Collider> selfColliders;
 
     [Header("Random objects needed")]
@@ -22,24 +21,7 @@ public class MovieBasicAttack : MonoBehaviour
     [Header("You can add colliders to avoid hitting them")]
     [SerializeField] List<Collider> noDupesColliders;
 
-    //public void Start()
-    //{
-    //    Collider[] startColliders = gameObject.GetComponentsInChildren<Collider>();
 
-    //    foreach(Collider newCollider in startColliders)
-    //    {
-    //        selfColliders.Add(newCollider);
-    //    }
-
-    //    if (!canHurtSelf)
-    //    {
-    //        foreach(var collider in selfColliders)
-    //        {
-    //            noDupesColliders.Add(collider);
-    //        }
-    //    }
-
-    //}
 
 
     public IEnumerator NormalAttack()

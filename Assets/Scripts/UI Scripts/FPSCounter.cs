@@ -17,15 +17,60 @@ public class FPSCounter : MonoBehaviour
     {
         pauseScript = FindObjectOfType<PauseScript>();
 
-        if (FPSCounterToggle.isOn)
+        //if(PlayerPrefs.GetInt("FPSCounter") < 0 || PlayerPrefs.GetInt("FPSCounter") > 1 )
+        //{
+        //    Debug.Log("Player Prefs is out of range. This is what it's set to: " + PlayerPrefs.GetInt("FPSCounter"));
+        //    PlayerPrefs.SetInt("FPSCounter", 1);
+        //    StartCoroutine(CounterOn());
+        //}
+        //else
+        //{
+        //    Debug.Log("Player Prefs is reporting a normal number. This is what it's set to: " + PlayerPrefs.GetInt("FPSCounter"));
+        //    FPSToggle();
+        //}
+
+
+        //if (PlayerPrefs.GetInt("FPSCounter") == 0)
+        //{
+        //    FPSCounterToggle.isOn = false;
+        //    FPSToggle();
+        //    //this.gameObject.SetActive(false);
+        //}
+        //else if (PlayerPrefs.GetInt("FPSCounter") == 1)
+        //{
+        //    //this.gameObject.SetActive(true);
+        //    FPSCounterToggle.isOn = false;
+        //    StartCoroutine(CounterOn());
+        //}
+
+    }
+
+    public void OnEnable()
+    {
+
+        if (PlayerPrefs.GetInt("FPSCounter") == 0)
         {
-            this.gameObject.SetActive(true);
-            StartCoroutine(CounterOn());
+            FPSCounterToggle.isOn = false;
+            FPSToggle();
+            //this.gameObject.SetActive(false);
+        }
+        else if (PlayerPrefs.GetInt("FPSCounter") == 1)
+        {
+            //this.gameObject.SetActive(true);
+            FPSCounterToggle.isOn = true;
+            FPSToggle();
         }
         else
         {
-            this.gameObject.SetActive(false);
+            Debug.Log("Player Prefs is out of range. This is what it's set to: " + PlayerPrefs.GetInt("FPSCounter"));
+            PlayerPrefs.SetInt("FPSCounter", 1);
+            StartCoroutine(CounterOn());
         }
+
+
+
+        
+
     }
 
 
@@ -35,11 +80,13 @@ public class FPSCounter : MonoBehaviour
         if(FPSCounterToggle.isOn)
         {
             fpsText.enabled = true;
+            PlayerPrefs.SetInt("FPSCounter", 1);
             StartCoroutine(CounterOn());
         }
         else
         {
             fpsText.enabled = false;
+            PlayerPrefs.SetInt("FPSCounter", 0);
             StopCoroutine(CounterOn());
         }
     }
@@ -50,11 +97,8 @@ public class FPSCounter : MonoBehaviour
         {
             yield return null;
 
-            if (!pauseScript.isPaused)
-            {
-                float FPSfloat = (int)(1f / Time.smoothDeltaTime);
-                fpsText.text = FPSfloat.ToString();
-            }
+            float FPSfloat = (int)(1f / Time.unscaledDeltaTime);
+            fpsText.text = FPSfloat.ToString();
         }
     }
 }
